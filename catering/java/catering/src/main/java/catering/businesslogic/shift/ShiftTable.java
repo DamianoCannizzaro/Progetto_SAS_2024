@@ -1,23 +1,31 @@
 package catering.businesslogic.shift;
 
 import catering.businesslogic.event.EventInfo;
+import catering.businesslogic.user.User;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 
+import java.time.LocalTime;
 import java.util.Date;
 
-public interface ShiftTable {
-    
-    ObservableList<Shift> Shifts = null;
-    
-    ObservableMap<ShiftTable, Integer> recurringTables = null;
+public abstract class ShiftTable {
+    private EventInfo event;
+    private String type;
+    private boolean order;
+    User owner;
+    private ObservableList<Shift> Shifts = FXCollections.observableArrayList();
+    private ObservableMap<ShiftTable,Integer> recurringTables = FXCollections.observableHashMap();
 
-    public ShiftTable createShiftTable(String type, EventInfo ev);
 
-    public boolean isEmpty();
+    public boolean isEmpty(){
+        return Shifts.isEmpty();
+    };
 
-    public ShiftTable checkTable(ShiftTable st);
+    public ShiftTable checkTable(ShiftTable st){
+        return st;
+    };
 
-    public Shift addShift(ShiftTable st, String type, double startTime, double endTime, Date deadline, double preExt
-            , double postExt, boolean group, String groupName);
+    public abstract Shift addShift(ShiftTable st, String type, LocalTime startTime, LocalTime endTime, Date jobDate, Date deadline, LocalTime preExt, LocalTime postExt, boolean group, String groupName);
 }
+

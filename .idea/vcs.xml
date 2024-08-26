@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="VcsDirectoryMappings">
-    <mapping directory="$USER_HOME$/OneDrive/Documenti/GitHub/SAS_Progetto/Sviluppo e applicazione software-20240521T115503Z-001/Implementazione" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../Documenti/GitHub/SAS_Progetto/Sviluppo e applicazione software-20240521T115503Z-001/Implementazione" vcs="Git" />
   </component>
 </project>
