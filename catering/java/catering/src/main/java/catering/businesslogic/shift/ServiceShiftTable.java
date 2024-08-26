@@ -1,30 +1,26 @@
 package catering.businesslogic.shift;
 
 import catering.businesslogic.event.EventInfo;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 
 import java.time.LocalTime;
 import java.util.Date;
 
-public class CookShiftTable extends ShiftTable{
+public class ServiceShiftTable extends ShiftTable{
 
-    //Costruttore per tabella turni di cucina
-    public CookShiftTable(String typ, EventInfo ev, boolean ord) {
-        if (typ.equals("cucina")){
+    public ServiceShiftTable(String typ, EventInfo ev, boolean ord) {
+        if (typ.equals("servizio")){
             event = ev;
             order = ord;
-            type = "cucina";
+            type = "servizio";
             this.owner = ev.getOrganizer();
         }
         else {
-            System.out.println("Unable to create cook shift table due to wrong type: " + type +"\n\n" + "Try again with matching type and table");
+            System.out.println("Unable to create service shift table due to wrong type: " + type +"\n\n" + "Try again with matching type and table");
         }
     }
-
     public ObservableList<Shift> getShifts() { return Shifts; }
     public ObservableMap<ShiftTable, Date> getRecurringTable() { return recurringTable; }
-
 
 }
