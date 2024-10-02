@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class Shift {
 
-    //fixme aggiornare usando variabile per oraario corretto
+    //fixme aggiornare usando variabile per orario corretto
     private LocalTime startTime;
     private LocalTime endTime;
     private Date jobDate;

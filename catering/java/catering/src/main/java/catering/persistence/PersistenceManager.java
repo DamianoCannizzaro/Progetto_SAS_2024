@@ -7,7 +7,7 @@ import java.sql.*;
 public class PersistenceManager {
     private static String url = "jdbc:mysql://localhost:3306/catering?serverTimezone=UTC";
     private static String username = "root";
-    private static String password = "4321test";
+    private static String password = "admin";
 
     private static int lastId;
 
@@ -33,6 +33,10 @@ public class PersistenceManager {
         }
     }
 
+    /**
+     *  metodo che permette di eseguire una query mandata in input
+     * @param query :
+     * */
     public static void executeQuery(String query, ResultHandler handler) {
         try (Connection conn = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = conn.prepareStatement(query);

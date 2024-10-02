@@ -13,7 +13,6 @@ import java.util.Set;
 public class User {
 
     private static Map<Integer, User> loadedUsers = FXCollections.observableHashMap();
-
     public static enum Role {SERVIZIO, CUOCO, CHEF, ORGANIZZATORE};
 
     private int id;
@@ -30,6 +29,7 @@ public class User {
         return roles.contains(Role.CHEF);
     }
 
+    public boolean isManager() { return roles.contains(Role.ORGANIZZATORE);}
     public String getUserName() {
         return username;
     }
@@ -102,11 +102,11 @@ public class User {
         });
         if (u.id > 0) {
             loadedUsers.put(u.id, u);
-            String roleQuery = "SELECT * FROM UserRoles WHERE user_id=" + u.id;
+            String roleQuery = "SELECT * FROM UserRoles WHERE user=" + u.id;
             PersistenceManager.executeQuery(roleQuery, new ResultHandler() {
                 @Override
                 public void handle(ResultSet rs) throws SQLException {
-                    String role = rs.getString("role_id");
+                    String role = rs.getString("user");
                     switch (role.charAt(0)) {
                         case 'c':
                             u.roles.add(User.Role.CUOCO);

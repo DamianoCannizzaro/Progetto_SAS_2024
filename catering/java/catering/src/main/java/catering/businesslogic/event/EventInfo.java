@@ -59,4 +59,9 @@ public class EventInfo implements EventItemInfo {
         }
         return all;
     }
+
+    public boolean isAssigned(User user) {
+        //TODO: implementare controllo assegnazione user
+        return true;
+    }
 }
