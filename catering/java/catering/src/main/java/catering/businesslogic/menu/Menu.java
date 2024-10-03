@@ -19,9 +19,10 @@ import java.util.Map;
 public class Menu {
     private static Map<Integer, Menu> loadedMenus = FXCollections.observableHashMap();
     private int id;
-    private String title;   //W IL DVX
+    private String title;   //W IL DVX gesu malandrino
     private boolean published;
     private boolean inUse;
+
 
     private ObservableMap<String, Boolean> featuresMap;
     private ObservableList<MenuItem> freeItems;
