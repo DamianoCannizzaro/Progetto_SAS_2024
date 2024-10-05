@@ -23,8 +23,6 @@ public class CookShiftTable extends ShiftTable{
         }
     }
 
-    public ObservableList<Shift> getShifts() { return Shifts; }
-    public ObservableMap<ShiftTable, Date> getRecurringTable() { return recurringTable; }
 
 
 }

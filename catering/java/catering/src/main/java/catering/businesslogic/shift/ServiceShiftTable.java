@@ -20,7 +20,5 @@ public class ServiceShiftTable extends ShiftTable{
             System.out.println("Unable to create service shift table due to wrong type: " + type +"\n\n" + "Try again with matching type and table");
         }
     }
-    public ObservableList<Shift> getShifts() { return Shifts; }
-    public ObservableMap<ShiftTable, Date> getRecurringTable() { return recurringTable; }
 
 }

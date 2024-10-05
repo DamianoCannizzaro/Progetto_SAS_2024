@@ -5,6 +5,7 @@ import catering.businesslogic.UseCaseLogicException;
 import catering.businesslogic.event.EventInfo;
 import catering.businesslogic.user.User;
 import catering.businesslogic.user.UserManager;
+import catering.persistence.ShiftPersistence;
 
 import java.sql.Time;
 import java.time.LocalTime;
@@ -17,6 +18,19 @@ public class ShiftManager {
     private ArrayList<ShiftEventReceiver> eventReceivers;
 
     public ShiftManager() { eventReceivers = new ArrayList<>();}
+
+    /**
+     * CIAO
+     * FABIO
+     * BEN
+     * TROVATO
+     * TI
+     * VEDO
+     * LAVORARE
+     * ...
+     * <3
+     * */
+
 
     public ShiftTable createCookShiftTable(String type, EventInfo ev) throws UseCaseLogicException {
         if (type.equals("cucina")) {
@@ -61,4 +75,7 @@ public Shift addShift(ShiftTable st , String type, LocalTime startTime, LocalTim
             er.updateCookShiftCreated(cst);
         }
     }
+
+    public void addEventReceiver(ShiftEventReceiver rec) { this.eventReceivers.add(rec); }
+    public void removeEventReceiver(ShiftEventReceiver rec) { this.eventReceivers.remove(rec); }
 }
