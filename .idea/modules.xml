@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Progetto_SAS_2024.iml" filepath="$PROJECT_DIR$/.idea/Progetto_SAS_2024.iml" />
-      <module fileurl="file://$PROJECT_DIR$/catering/java/catering/catering.iml" filepath="$PROJECT_DIR$/catering/java/catering/catering.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/CatERing_SQL.iml" filepath="$PROJECT_DIR$/.idea/CatERing_SQL.iml" />
     </modules>
   </component>
 </project>
