@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class ShiftManager {
-    private ShiftTable currentCShiftTable;
-    private ShiftTable currentSShiftTable;
+    private ShiftTable currCookSTable;
+    private ShiftTable currServiceSTable;
     private ArrayList<ShiftEventReceiver> eventReceivers;
 
     public ShiftManager() { eventReceivers = new ArrayList<>();}
@@ -35,18 +35,26 @@ public class ShiftManager {
 
 
     public void setCurrentCShiftTable(ShiftTable currentST) {
-        this.currentCShiftTable = currentST;
+        this.currCookSTable = currentST;
     }
     public void setCurrentSShiftTable(ShiftTable currentST) {
-        this.currentSShiftTable = currentST;
+        this.currServiceSTable = currentST;
     }
 
-/*
-    public Shift addShift(ShiftTable st, String type, LocalTime preExt, LocalTime postExt, Date jobDate, Date deadline, LocalTime startTime, LocalTime endTime, boolean gruop, String gruopName){
-        return currentShiftTable.addShift(st, type, preExt, postExt, jobDate, deadline, startTime, endTime, gruop, gruopName );
+ /** Metodo per aggiungere un turno alla tabella corrispettiva.
+  * Si effettua un controllo sul parametro type e viene aggiornata
+  * la tabella di riferimento
+  * */
+public Shift addShift(ShiftTable st , String type, LocalTime startTime, LocalTime endTime, Date jobDate, Date deadline, LocalTime preExt, LocalTime postExt, boolean group, String groupName) throws UseCaseLogicException {
+        if (type.equals("cucina")) {
+            return currCookSTable.addShift(st, startTime, endTime, jobDate, deadline, preExt, postExt, group, groupName );
+        }else if(type.equals("servizio")) {
+            return currServiceSTable.addShift(st, startTime, endTime, jobDate, deadline, preExt, postExt, group, groupName );
+        }
+        else throw new UseCaseLogicException();
     }
-*/
-    //Notify methods
+
+    //--------------------Notify methods-----------------------------
 
     private void notifyCookShiftTableCreated(ShiftTable cst) {
         for (ShiftEventReceiver er: eventReceivers) {

@@ -35,7 +35,6 @@ public class PersistenceManager {
 
     /**
      *  metodo che permette di eseguire una query mandata in input
-     * @param query :
      * */
     public static void executeQuery(String query, ResultHandler handler) {
         try (Connection conn = DriverManager.getConnection(url, username, password);

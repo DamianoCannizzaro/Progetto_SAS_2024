@@ -26,10 +26,11 @@ public abstract class ShiftTable {
         return st;
     };
 
-    public Shift addShift(ShiftTable st, String type, LocalTime startTime, LocalTime endTime, Date jobDate, Date deadline, LocalTime preExt, LocalTime postExt, boolean group, String groupName){
-        Shift newS = new Shift(startTime, endTime, jobDate, deadline, group, groupName);
+    public Shift addShift(ShiftTable st, LocalTime startTime, LocalTime endTime, Date jobDate, Date deadline, LocalTime preExt, LocalTime postExt, boolean group, String groupName){
+        Shift newS = new Shift(startTime, endTime, jobDate, deadline, group, groupName, preExt, postExt);
         Shifts.add(newS);
         return newS;
+
     };
 }
 
