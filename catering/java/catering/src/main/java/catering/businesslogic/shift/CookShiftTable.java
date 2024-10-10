@@ -11,11 +11,11 @@ import java.util.Date;
 public class CookShiftTable extends ShiftTable{
 
     //Costruttore per tabella turni di cucina
-    public CookShiftTable(String typ, EventInfo ev, boolean ord) {
-        if (typ.equals("cucina")){
+    public CookShiftTable(String type, EventInfo ev, boolean ord) {
+        if (type.equals("c")){
             event = ev;
             order = ord;
-            type = "cucina";
+            this.type = "c";
             this.owner = ev.getOrganizer();
         }
         else { //TODO gestire errore con UseCaseLogicException

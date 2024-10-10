@@ -33,7 +33,7 @@ public class ShiftManager {
 
 
     public ShiftTable createCookShiftTable(String type, EventInfo ev) throws UseCaseLogicException {
-        if (type.equals("cucina")) {
+        if (type.equals("c")) {
             User user=  CatERing.getInstance().getUserManager().getCurrentUser();
             if(!user.isManager() || !ev.isAssigned(user)) throw new UseCaseLogicException();
                else {

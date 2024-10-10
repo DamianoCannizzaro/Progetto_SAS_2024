@@ -40,6 +40,28 @@ public class EventInfo implements EventItemInfo {
 
     // STATIC METHODS FOR PERSISTENCE
 
+    public static EventInfo EventInfoFromName(String name) {
+        String query = "SELECT * FROM events WHERE name = '" + name + "'";
+        final EventInfo[] ev = {new EventInfo(name)};
+        System.out.println("test nome event: " + name);
+        System.out.println("test query: " +query);
+
+        PersistenceManager.executeQuery(query, new ResultHandler() {
+            public void handle(ResultSet rs) throws SQLException {
+                EventInfo e = new EventInfo(rs.getString("name"));
+                e.id = rs.getInt("id");
+                e.dateStart = rs.getDate("date_start");
+                e.dateEnd = rs.getDate("date_end");
+                e.participants = rs.getInt("expected_participants");
+                int org = rs.getInt("organizer_id");
+                e.organizer = User.loadUserById(org);
+                ev[0] = e;
+            }
+        });
+        return ev[0];
+    }
+
+
     public static ObservableList<EventInfo> loadAllEventInfo() {
         ObservableList<EventInfo> all = FXCollections.observableArrayList();
         String query = "SELECT * FROM Events WHERE true";

@@ -10,6 +10,7 @@ import catering.businesslogic.recipe.Recipe;
 import catering.persistence.PersistenceManager;
 import javafx.collections.ObservableList;
 
+import java.sql.SQLOutput;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -21,6 +22,8 @@ public class TestCatERing {
             System.out.println("TEST FAKE LOGIN");
             CatERing.getInstance().getUserManager().fakeLogin("Lidia");
             System.out.println(CatERing.getInstance().getUserManager().getCurrentUser());
+
+            //--------------------Menu test section--------------------
 
             System.out.println("\nTEST CREATE MENU");
             Menu m = CatERing.getInstance().getMenuManager().createMenu("Menu Pinco Pallino");
@@ -70,6 +73,14 @@ public class TestCatERing {
             System.out.println("\nTEST PUBLISH");
             CatERing.getInstance().getMenuManager().publish();
             System.out.println(m.testString());
+
+            //--------------------Shift test section--------------------
+            System.out.println("\nTEST CREATE SHIFT TABLES");
+            EventInfo e = CatERing.getInstance().getEventManager().getEventInfo("Convegno Agile Community");
+            System.out.println(e);
+            CatERing.getInstance().getShiftManager().createCookShiftTable("c", e);
+            System.out.println("Done.");
+
 
         } catch (UseCaseLogicException e) {
             System.out.println("Errore di logica nello use case");

@@ -56,4 +56,6 @@ public class CatERing {
 
     public EventManager getEventManager() { return eventMgr; }
 
+    public ShiftManager getShiftManager() { return shiftMgr; }
+
 }
