@@ -19,17 +19,6 @@ public class ShiftManager {
 
     public ShiftManager() { eventReceivers = new ArrayList<>();}
 
-    /**
-     * CIAO
-     * FABIO
-     * BEN
-     * TROVATO
-     * TI
-     * VEDO
-     * LAVORARE
-     * ...
-     * <3
-     * */
 
 
     public ShiftTable createCookShiftTable(String type, EventInfo ev) throws UseCaseLogicException {
@@ -44,6 +33,22 @@ public class ShiftManager {
                 return cst;
             }
         }else return null;
+    }
+
+    public ShiftTable createServiceShiftTable(String type, EventInfo ev) throws UseCaseLogicException {
+        User currentUser = CatERing.getInstance().getUserManager().getCurrentUser();
+
+        if (!currentUser.isManager() || !ev.isAssigned(currentUser)) {
+
+            throw new UseCaseLogicException("L'utente è nu ricchiuuun.");
+        }
+
+        ShiftTable serviceShiftTable = new ServiceShiftTable(type, ev, false);
+
+        this.setCurrentSShiftTable(serviceShiftTable);
+        this.notifyCookShiftTableCreated(serviceShiftTable);
+
+        return serviceShiftTable;
     }
 
 
