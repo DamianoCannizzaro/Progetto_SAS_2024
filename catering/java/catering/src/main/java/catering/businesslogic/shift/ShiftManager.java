@@ -6,6 +6,7 @@ import catering.businesslogic.event.EventInfo;
 import catering.businesslogic.user.User;
 import catering.businesslogic.user.UserManager;
 import catering.persistence.ShiftPersistence;
+import catering.businesslogic.shift.ShiftManager;
 
 import java.sql.Time;
 import java.time.LocalTime;
@@ -23,24 +24,24 @@ public class ShiftManager {
 
     public ShiftTable createCookShiftTable(String type, EventInfo ev) throws UseCaseLogicException {
         if (type.equals("c")) {
-            User user=  CatERing.getInstance().getUserManager().getCurrentUser();
-            if(!user.isManager() || !ev.isAssigned(user)) throw new UseCaseLogicException();
-               else {
-                ShiftTable cst = new CookShiftTable(type, ev, false);
-                this.setCurrentCShiftTable(cst);
-                this.notifyCookShiftTableCreated(cst);
+            User user = CatERing.getInstance().getUserManager().getCurrentUser();
+            if (!user.isManager() || !ev.isAssigned(user)) throw new UseCaseLogicException();
 
-                return cst;
-            }
-        }else return null;
+            ShiftTable cst = new CookShiftTable(type, ev, false);
+            this.setCurrentCShiftTable(cst);
+            this.notifyCookShiftTableCreated(cst);
+
+            return cst;
+        }
+        else throw new UseCaseLogicException();
     }
 
     public ShiftTable createServiceShiftTable(String type, EventInfo ev) throws UseCaseLogicException {
         User currentUser = CatERing.getInstance().getUserManager().getCurrentUser();
 
         if (!currentUser.isManager() || !ev.isAssigned(currentUser)) {
-
-            throw new UseCaseLogicException("L'utente è nu ricchiuuun.");
+            //"L'utente è nu ricchiuuun."
+            throw new UseCaseLogicException();
         }
 
         ShiftTable serviceShiftTable = new ServiceShiftTable(type, ev, false);
@@ -64,10 +65,10 @@ public class ShiftManager {
   * Si effettua un controllo sul parametro type e viene aggiornata
   * la tabella di riferimento
   * */
-public Shift addShift(ShiftTable st , String type, LocalTime startTime, LocalTime endTime, Date jobDate, Date deadline, LocalTime preExt, LocalTime postExt, boolean group, String groupName) throws UseCaseLogicException {
-        if (type.equals("cucina")) {
+public Shift addShiftToTable(ShiftTable st , String type, LocalTime startTime, LocalTime endTime, Date jobDate, Date deadline, LocalTime preExt, LocalTime postExt, boolean group, String groupName) throws UseCaseLogicException {
+        if (type.equals("c")) {
             return currCookSTable.addShift(st, startTime, endTime, jobDate, deadline, preExt, postExt, group, groupName );
-        }else if(type.equals("servizio")) {
+        }else if(type.equals("s")) {
             return currServiceSTable.addShift(st, startTime, endTime, jobDate, deadline, preExt, postExt, group, groupName );
         }
         else throw new UseCaseLogicException();

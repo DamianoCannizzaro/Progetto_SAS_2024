@@ -8,7 +8,7 @@ public class EventManager {
         return EventInfo.loadAllEventInfo();
     }
 
-    public EventInfo getEventInfo(String name) {
+    public EventInfo getEventInfoFromName(String name) {
         return EventInfo.EventInfoFromName(name);
     }
 }

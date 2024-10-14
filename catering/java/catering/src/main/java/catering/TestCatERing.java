@@ -7,6 +7,8 @@ import catering.businesslogic.event.ServiceInfo;
 import catering.businesslogic.menu.Menu;
 import catering.businesslogic.menu.Section;
 import catering.businesslogic.recipe.Recipe;
+import catering.businesslogic.shift.CookShiftTable;
+import catering.businesslogic.shift.ShiftTable;
 import catering.persistence.PersistenceManager;
 import javafx.collections.ObservableList;
 
@@ -76,9 +78,9 @@ public class TestCatERing {
 
             //--------------------Shift test section--------------------
             System.out.println("\nTEST CREATE SHIFT TABLES");
-            EventInfo e = CatERing.getInstance().getEventManager().getEventInfo("Convegno Agile Community");
+            EventInfo e = CatERing.getInstance().getEventManager().getEventInfoFromName("Convegno Agile Community");
             System.out.println(e);
-            CatERing.getInstance().getShiftManager().createCookShiftTable("c", e);
+            ShiftTable cst = CatERing.getInstance().getShiftManager().createCookShiftTable("c", e);
             System.out.println("Done.");
 
 

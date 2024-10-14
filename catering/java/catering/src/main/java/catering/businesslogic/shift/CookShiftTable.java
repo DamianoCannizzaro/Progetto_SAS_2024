@@ -22,7 +22,4 @@ public class CookShiftTable extends ShiftTable{
             System.out.println("Unable to create cook shift table due to wrong type: " + type +"\n\n" + "Try again with matching type and table");
         }
     }
-
-
-
 }

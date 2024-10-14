@@ -47,8 +47,10 @@ public class EventInfo implements EventItemInfo {
         System.out.println("test query: " +query);
 
         PersistenceManager.executeQuery(query, new ResultHandler() {
+            @Override
             public void handle(ResultSet rs) throws SQLException {
-                EventInfo e = new EventInfo(rs.getString("name"));
+                String n = rs.getString("name");
+                EventInfo e = new EventInfo(n);
                 e.id = rs.getInt("id");
                 e.dateStart = rs.getDate("date_start");
                 e.dateEnd = rs.getDate("date_end");

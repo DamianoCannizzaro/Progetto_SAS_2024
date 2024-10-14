@@ -29,18 +29,17 @@ public class Shift {
     private String groupName = "";
 
     //costruttore
-    public Shift(LocalTime startTime, LocalTime endTime, Date jobDate, Date deadline, boolean group, String groupName, LocalTime preExt, LocalTime postExt) {
+    public Shift(LocalTime startTime, LocalTime endTime, Date jobDate, Date deadline, boolean group, String groupName) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.jobDate = jobDate;
         this.deadline = deadline;
         this.group = group;
         if(group)this.groupName = groupName;
-        if (preExt.isBefore(startTime)) this.startTime = preExt;
-        if (postExt.isAfter(endTime)) this.endTime = postExt;
+
     }
 
-    public Shift UpdateShift(Shift s, LocalTime startTime, LocalTime endTime, Date jobDate, Date deadline, boolean group, String groupName, LocalTime preExt, LocalTime postExt) {
+    public Shift UpdateShift(Shift s, LocalTime startTime, LocalTime endTime, Date jobDate, Date deadline, boolean group, String groupName) {
         if(s.startTime != startTime)s.startTime = startTime;
         if(s.endTime != endTime)s.endTime = endTime;
         if(s.jobDate != jobDate)s.jobDate = jobDate;
@@ -49,8 +48,6 @@ public class Shift {
         if(s.groupName != groupName && group) {
             s.groupName = groupName;
         }else if (!group) groupName = " ";
-        if (preExt.isBefore(startTime)) s.startTime = preExt;
-        if (postExt.isAfter(endTime)) s.endTime = postExt;
         return s;
     }
 
