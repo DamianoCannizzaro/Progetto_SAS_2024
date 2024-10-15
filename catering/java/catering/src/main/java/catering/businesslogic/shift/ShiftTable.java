@@ -45,7 +45,7 @@ public abstract class ShiftTable {
     public ObservableMap<ShiftTable, Date> getRecurringTable() { return recurringTable; }
 
     public static void saveNewShiftTable(ShiftTable st) {
-        String stInsert = "INSERT INTO catering.ShiftTables (id, event, type, owner_id, order) VALUES (?,?,?,?);";
+        String stInsert = "INSERT INTO catering.ShiftTables (event, ev_type, owner_id, `order`) VALUES (?, ?, ?, ?);";
         int[] result = PersistenceManager.executeBatchUpdate(stInsert, 1, new BatchUpdateHandler() {
             @Override
             public void handleBatchItem(PreparedStatement ps, int batchCount) throws SQLException {
@@ -64,9 +64,9 @@ public abstract class ShiftTable {
         });
         //TODO: altri salvataggi da aggiungere allo shift (singoli turni e altro poi vedi)
 
-//        if (result[0] > 0){
-//            loadedTables.put(st.id, st);
-//        }
+        if (result[0] > 0){
+            loadedTables.put(st.id, st);
+        }
 
     }
 }
