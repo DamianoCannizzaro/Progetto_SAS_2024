@@ -36,6 +36,10 @@ public class Shift {
         this.deadline = deadline;
         this.group = group;
         if(group)this.groupName = groupName;
+    }
+
+    public static void saveNewShift(Shift s) {
+
 
     }
 

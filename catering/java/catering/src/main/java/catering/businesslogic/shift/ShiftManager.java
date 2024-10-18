@@ -66,12 +66,22 @@ public class ShiftManager {
   * la tabella di riferimento
   * */
 public Shift addShiftToTable(ShiftTable st , String type, LocalTime startTime, LocalTime endTime, Date jobDate, Date deadline, LocalTime preExt, LocalTime postExt, boolean group, String groupName) throws UseCaseLogicException {
-        if (type.equals("c")) {
-            return currCookSTable.addShift(st, startTime, endTime, jobDate, deadline, preExt, postExt, group, groupName );
+    Shift newShift;
+    if (type.equals("c")) {
+            newShift = currCookSTable.addShift(st, startTime, endTime, jobDate, deadline, preExt, postExt, group, groupName );
         }else if(type.equals("s")) {
-            return currServiceSTable.addShift(st, startTime, endTime, jobDate, deadline, preExt, postExt, group, groupName );
+            newShift = currServiceSTable.addShift(st, startTime, endTime, jobDate, deadline, preExt, postExt, group, groupName );
         }
         else throw new UseCaseLogicException();
+
+        notifyShiftCreated(newShift);
+        return newShift;
+}
+
+    private void notifyShiftCreated(Shift newShift) {
+    for (ShiftEventReceiver er : eventReceivers) {
+        er.updateShiftCreated(newShift);
+    }
     }
 
     //--------------------Notify methods-----------------------------

@@ -44,6 +44,9 @@ public abstract class ShiftTable {
     public ObservableList<Shift> getShifts() { return Shifts; }
     public ObservableMap<ShiftTable, Date> getRecurringTable() { return recurringTable; }
 
+
+    //PERSISTENCE AND FORMAT METHODS
+
     public static void saveNewShiftTable(ShiftTable st) {
         String stInsert = "INSERT INTO catering.ShiftTables (event, ev_type, owner_id, `order`) VALUES (?, ?, ?, ?);";
         int[] result = PersistenceManager.executeBatchUpdate(stInsert, 1, new BatchUpdateHandler() {
