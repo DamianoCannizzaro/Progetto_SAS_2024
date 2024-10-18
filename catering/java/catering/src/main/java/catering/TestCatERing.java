@@ -81,8 +81,8 @@ public class TestCatERing {
             EventInfo e = CatERing.getInstance().getEventManager().getEventInfoFromName("Convegno Agile Community");
             System.out.println(e);
             ShiftTable cst = CatERing.getInstance().getShiftManager().createCookShiftTable("c", e);
+            cst.testString();
             System.out.println("Done.");
-
 
         } catch (UseCaseLogicException e) {
             System.out.println("Errore di logica nello use case");
