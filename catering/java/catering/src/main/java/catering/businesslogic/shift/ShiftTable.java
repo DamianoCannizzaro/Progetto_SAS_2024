@@ -74,51 +74,6 @@ public abstract class ShiftTable {
     public String toString(){
         return event.getName() + " | " + type + " | " + owner.getUserName() + " | " + order;
     }
-
-    public String[] splitString(){
-        String st = this.toString();
-        return st.split(" ");
-    }
-//    public String printShiftTables() {
-//        String[][] ShiftTable = {{"event", "ev_type", "owner_id", "order"},};
-//        int count = 1;
-//        for (int id : loadedTables.keySet()) {
-//            ShiftTable[count] = loadedTables.get(id).splitString();
-//
-//        }
-//    }
-    // Metodo principale per disegnare la tabella
-    public static void drawTable(String[][] data, int[] larghezzaColonne) {
-        // Disegna la riga superiore
-        drawLine(larghezzaColonne);
-
-        // Disegna le righe dei dati
-        for (String[] riga : data) {
-            drawRow(riga, larghezzaColonne);
-            drawLine(larghezzaColonne);  // Aggiungi linea dopo ogni riga
-        }
-    }
-
-    // Metodo per disegnare una singola riga con i dati
-    private static void drawRow(String[] riga, int[] larghezzaColonne) {
-        System.out.print("|");
-        for (int i = 0; i < riga.length; i++) {
-            System.out.printf(" %-"+larghezzaColonne[i]+"s |", riga[i]);
-        }
-        System.out.println();
-    }
-
-    // Metodo per disegnare una linea di separazione
-    private static void drawLine(int[] larghezzaColonne) {
-        System.out.print("+");
-        for (int larghezza : larghezzaColonne) {
-            for (int i = 0; i < larghezza + 2; i++) {
-                System.out.print("-");
-            }
-            System.out.print("+");
-        }
-        System.out.println();
-    }
     public void testString() {
         System.out.printf("%-10s  | %-20s | %-1s | %-10s | %s\n  ","id", "Evento", "tipo", "proprietario", "ordine");
         System.out.println("--------------------------------------------");
