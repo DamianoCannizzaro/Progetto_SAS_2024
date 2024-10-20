@@ -8,12 +8,15 @@ import catering.businesslogic.menu.Menu;
 import catering.businesslogic.menu.Section;
 import catering.businesslogic.recipe.Recipe;
 import catering.businesslogic.shift.CookShiftTable;
+import catering.businesslogic.shift.Shift;
 import catering.businesslogic.shift.ShiftTable;
 import catering.persistence.PersistenceManager;
 import javafx.collections.ObservableList;
 
 import java.sql.SQLOutput;
+import java.sql.Time;
 import java.util.Arrays;
+import java.sql.Date;
 import java.util.Map;
 
 public class TestCatERing {
@@ -82,7 +85,29 @@ public class TestCatERing {
             System.out.println(e);
             ShiftTable cst = CatERing.getInstance().getShiftManager().createCookShiftTable("c", e);
             cst.testString();
+            ShiftTable sst = CatERing.getInstance().getShiftManager().createServiceShiftTable("s", e);
+            sst.testString();
             System.out.println("Done.");
+
+            System.out.println("\nTEST CREATE NEW SHIFTS");
+            Time sT = Time.valueOf("15:30:00");
+            Time eT = Time.valueOf("18:30:00");
+            Date jd = Date.valueOf("2024-11-22");
+            Date deadline = Date.valueOf("2024-11-20");
+            boolean g1 = true;
+            boolean g2 = false;
+            String gn = "Beppe Storaci";
+            Shift newCS = CatERing.getInstance().getShiftManager().addShiftToTable(cst,sT,eT,jd,deadline,g1, gn);
+            System.out.println(newCS);
+            Shift newSS = CatERing.getInstance().getShiftManager().addShiftToTable(sst,sT,eT,jd,deadline,g2, gn);
+            System.out.println(newSS);
+
+
+
+
+
+
+
 
         } catch (UseCaseLogicException e) {
             System.out.println("Errore di logica nello use case");

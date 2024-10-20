@@ -10,10 +10,10 @@ import java.util.Date;
 public class ServiceShiftTable extends ShiftTable{
 
     public ServiceShiftTable(String typ, EventInfo ev, boolean ord) {
-        if (typ.equals("servizio")){
+        if (typ.equals("s")){
             event = ev;
             order = ord;
-            type = "servizio";
+            type = "s";
             this.owner = ev.getOrganizer();
         }
         else {

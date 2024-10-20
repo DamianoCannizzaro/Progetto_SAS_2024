@@ -28,6 +28,7 @@ public class EventInfo implements EventItemInfo {
     public ObservableList<ServiceInfo> getServices() {
         return FXCollections.unmodifiableObservableList(this.services);
     }
+    public int getId() {            return id;}
     public String getName(){        return this.name;}
     public Date getDateEnd() {      return dateEnd;}
     public Date getDateStart() {    return dateStart;}

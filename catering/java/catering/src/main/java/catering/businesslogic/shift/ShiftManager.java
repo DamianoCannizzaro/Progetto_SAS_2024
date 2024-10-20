@@ -52,8 +52,6 @@ public class ShiftManager {
         return serviceShiftTable;
     }
 
-
-
     public void setCurrentCShiftTable(ShiftTable currentST) {
         this.currCookSTable = currentST;
     }
@@ -65,14 +63,13 @@ public class ShiftManager {
   * Si effettua un controllo sul parametro type e viene aggiornata
   * la tabella di riferimento
   * */
-public Shift addShiftToTable(ShiftTable st , String type, LocalTime startTime, LocalTime endTime, Date jobDate, Date deadline, LocalTime preExt, LocalTime postExt, boolean group, String groupName) throws UseCaseLogicException {
+public Shift addShiftToTable(ShiftTable st , Time startTime, Time endTime, Date jobDate, Date deadline, boolean group, String groupName) throws UseCaseLogicException {
     Shift newShift;
-    if (type.equals("c")) {
-            newShift = currCookSTable.addShift(st, startTime, endTime, jobDate, deadline, preExt, postExt, group, groupName );
-        }else if(type.equals("s")) {
-            newShift = currServiceSTable.addShift(st, startTime, endTime, jobDate, deadline, preExt, postExt, group, groupName );
-        }
-        else throw new UseCaseLogicException();
+    if (st.type.equals("c")) {
+            newShift = currCookSTable.addShift(st, startTime, endTime, jobDate, deadline, group, groupName );
+    }else if(st.type.equals("s")) {
+            newShift = currServiceSTable.addShift(st, startTime, endTime, jobDate, deadline, group, groupName );
+    } else throw new UseCaseLogicException();
 
         notifyShiftCreated(newShift);
         return newShift;

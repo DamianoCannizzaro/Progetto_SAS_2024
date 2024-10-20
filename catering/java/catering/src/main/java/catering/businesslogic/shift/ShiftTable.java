@@ -11,7 +11,7 @@ import javafx.collections.ObservableMap;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalTime;
+import java.sql.Time;
 import java.util.Date;
 import java.util.Map;
 
@@ -33,8 +33,8 @@ public abstract class ShiftTable {
         return st;
     }
 
-    public Shift addShift(ShiftTable st, LocalTime startTime, LocalTime endTime, Date jobDate, Date deadline, LocalTime preExt, LocalTime postExt, boolean group, String groupName){
-        Shift newS = new Shift(startTime, endTime, jobDate, deadline, group, groupName);
+    public Shift addShift(ShiftTable st, Time startTime, Time endTime, Date jobDate, Date deadline, boolean group, String groupName){
+        Shift newS = new Shift(st.event.getId(),startTime, endTime, jobDate, deadline, group, groupName);
         Shifts.add(newS);
         return newS;
 
