@@ -18,6 +18,7 @@ public class ShiftManager {
     private ShiftTable currServiceSTable;
     private ArrayList<ShiftEventReceiver> eventReceivers;
 
+    //Costruttore ShiftManager
     public ShiftManager() { eventReceivers = new ArrayList<>();}
 
 
@@ -33,23 +34,29 @@ public class ShiftManager {
 
             return cst;
         }
-        else throw new UseCaseLogicException();
+        else if (type.equals("s")) {
+            System.out.println("Table type is " + type + ", redirecting to correct method");
+            return createServiceShiftTable(type, ev);
+        } else throw new UseCaseLogicException();
     }
 
     public ShiftTable createServiceShiftTable(String type, EventInfo ev) throws UseCaseLogicException {
-        User currentUser = CatERing.getInstance().getUserManager().getCurrentUser();
+        if (type.equals("s")) {
+            User user = CatERing.getInstance().getUserManager().getCurrentUser();
+            if (!user.isManager() || !ev.isAssigned(user)) {
+                throw new UseCaseLogicException();
+            }
 
-        if (!currentUser.isManager() || !ev.isAssigned(currentUser)) {
-            //"L'utente è nu ricchiuuun."
-            throw new UseCaseLogicException();
-        }
+            ShiftTable sst = new ServiceShiftTable(type, ev, false);
 
-        ShiftTable serviceShiftTable = new ServiceShiftTable(type, ev, false);
+            this.setCurrentSShiftTable(sst);
+            this.notifyCookShiftTableCreated(sst);
 
-        this.setCurrentSShiftTable(serviceShiftTable);
-        this.notifyCookShiftTableCreated(serviceShiftTable);
-
-        return serviceShiftTable;
+            return sst;
+        } else if (type.equals("c")) {
+            System.out.println("Table type is " + type + ", redirecting to correct method");
+            return createCookShiftTable(type, ev);
+        } else throw new UseCaseLogicException();
     }
 
     public void setCurrentCShiftTable(ShiftTable currentST) {
@@ -74,18 +81,21 @@ public Shift addShiftToTable(ShiftTable st , Time startTime, Time endTime, Date 
         notifyShiftCreated(newShift);
         return newShift;
 }
+    //TODO: aggiungere metodo eliminazione turno da tabella
+    //TODO: aggiungere metodo modifica turno
 
-    private void notifyShiftCreated(Shift newShift) {
-    for (ShiftEventReceiver er : eventReceivers) {
-        er.updateShiftCreated(newShift);
-    }
-    }
 
     //--------------------Notify methods-----------------------------
 
+    private void notifyShiftCreated(Shift newShift) {
+        for (ShiftEventReceiver er : eventReceivers) {
+            er.updateShiftCreated(newShift);
+        }
+    }
+
     private void notifyCookShiftTableCreated(ShiftTable cst) {
         for (ShiftEventReceiver er: eventReceivers) {
-            er.updateCookShiftCreated(cst);
+            er.updateCShiftTableCreated(cst);
         }
     }
 

@@ -5,7 +5,7 @@ import catering.businesslogic.shift.ShiftTable;
 import catering.businesslogic.shift.Shift;
 public class ShiftPersistence implements ShiftEventReceiver {
     @Override
-    public void updateCookShiftCreated(ShiftTable st) {
+    public void updateCShiftTableCreated(ShiftTable st) {
         ShiftTable.saveNewShiftTable(st);
     }
 

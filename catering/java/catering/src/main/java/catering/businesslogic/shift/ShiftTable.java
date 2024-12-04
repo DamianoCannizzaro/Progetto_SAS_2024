@@ -39,7 +39,9 @@ public abstract class ShiftTable {
         return newS;
 
     }
-
+    //TODO: aggiungere metodo elimina turno
+    //TODO: aggiungere metodo tabella ricorrente
+    //TODO:
 
     public ObservableList<Shift> getShifts() { return Shifts; }
     public ObservableMap<ShiftTable, Date> getRecurringTable() { return recurringTable; }

@@ -17,6 +17,7 @@ public class User {
 
     private int id;
     private String username;
+    private String mail;
     private Set<Role> roles;
 
     public User() {
@@ -37,6 +38,10 @@ public class User {
     public int getId() {
         return this.id;
     }
+
+    //TODO: aggiungere metodo conferma partecipazione
+    //TODO: aggiungere metodo mailconferma
+
 
     public String toString() {
         String result = username;
