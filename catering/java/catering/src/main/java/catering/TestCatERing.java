@@ -22,6 +22,8 @@ import java.util.Map;
 public class TestCatERing {
     public static void main(String[] args) {
         try {
+            System.out.println("TEST CLEANUP TABLES");
+            PersistenceManager.clearAllTables();
              System.out.println("TEST DATABASE CONNECTION");
             PersistenceManager.testSQLConnection();
             System.out.println("TEST FAKE LOGIN");
@@ -91,17 +93,27 @@ public class TestCatERing {
 
             System.out.println("\nTEST CREATE NEW SHIFTS");
             Time sT = Time.valueOf("15:30:00");
+            Time CsT = Time.valueOf("12:25:00");
             Time eT = Time.valueOf("18:30:00");
             Date jd = Date.valueOf("2024-11-22");
             Date deadline = Date.valueOf("2024-11-20");
             boolean g1 = true;
             boolean g2 = false;
             String gn = "Beppe Storaci";
-            Shift newCS = CatERing.getInstance().getShiftManager().addShiftToTable(cst,sT,eT,jd,deadline,g1, gn);
-            System.out.println(newCS);
+            Shift newCS = CatERing.getInstance().getShiftManager().addShiftToTable(cst,CsT,eT,jd,deadline,g1, gn);
+            System.out.println("New Cook Shift Created: \n" + newCS);
             Shift newSS = CatERing.getInstance().getShiftManager().addShiftToTable(sst,sT,eT,jd,deadline,g2, gn);
-            System.out.println(newSS);
+            System.out.println("New service shift created: \n" + newSS);
+            System.out.println("Cook Shift Table.");
+            cst.testString();
+            System.out.println("Service Shift Table.");
+            sst.testString();
+            //----------------TEST DELETE SHIFT---------------------
+            CatERing.getInstance().getShiftManager().deleteShift(newCS,cst);
+            cst.testString();
+            //CatERing.getInstance().getShiftManager().deleteShift(newSS,sst);
 
+            //----------------TEST RECURRING TABLE-------------------
 
 
 

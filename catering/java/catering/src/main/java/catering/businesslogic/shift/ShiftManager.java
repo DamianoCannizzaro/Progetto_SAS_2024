@@ -82,7 +82,27 @@ public Shift addShiftToTable(ShiftTable st , Time startTime, Time endTime, Date 
         return newShift;
 }
     //TODO: aggiungere metodo eliminazione turno da tabella
-    //TODO: aggiungere metodo modifica turno
+    public void deleteShift(Shift s,ShiftTable st) {
+    if(st.type.equals("c")) {
+        currCookSTable.deleteShift(s);
+        notiftyShiftRemoved(s);
+    }
+    else if(st.type.equals("s")) {
+        currServiceSTable.deleteShift(s);
+    }
+    }
+
+
+
+    //TODO: aggiungere metodo modifica turno; done
+    public Shift updateShift(Shift s, ShiftTable st,  Time startTime, Time endTime, Date jobDate, Date deadline, boolean group, String groupName){
+        return st.updateShift(s,startTime,endTime,jobDate,deadline,group,groupName);
+    }
+    //TODO: aggiungere metodo tabella ricorrente; done
+    public ShiftTable addRecurringTable(ShiftTable st, Date[] dates) throws UseCaseLogicException {
+    if (dates == null || dates.length == 0) throw new UseCaseLogicException();
+    else return st.addRecurringTable(st,dates);
+    }
 
 
     //--------------------Notify methods-----------------------------
@@ -91,6 +111,11 @@ public Shift addShiftToTable(ShiftTable st , Time startTime, Time endTime, Date 
         for (ShiftEventReceiver er : eventReceivers) {
             er.updateShiftCreated(newShift);
         }
+    }
+    private void notiftyShiftRemoved(Shift s) {
+    for (ShiftEventReceiver er : eventReceivers) {
+        er.updateShiftRemoved(s);
+    }
     }
 
     private void notifyCookShiftTableCreated(ShiftTable cst) {

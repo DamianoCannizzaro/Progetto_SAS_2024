@@ -14,5 +14,10 @@ public class ShiftPersistence implements ShiftEventReceiver {
         Shift.saveNewShift(newShift);
     }
 
+    @Override
+    public void updateShiftRemoved(Shift s) {
+        Shift.removeShift(s);
+    }
+
 
 }

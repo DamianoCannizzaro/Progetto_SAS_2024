@@ -33,6 +33,26 @@ public class PersistenceManager {
         }
     }
 
+    public static void clearAllTables() {
+        // Lista delle tabelle da svuotare
+        String[] tables = { "catering.Shifts", "catering.shifttables", "catering.menus", "catering.menufeatures", "catering.menuitems" };
+        for (String table : tables) {
+            String deleteQuery = "DELETE FROM " + table + ";";
+            int[] result = PersistenceManager.executeBatchUpdate(deleteQuery, 1, new BatchUpdateHandler() {
+                @Override
+                public void handleBatchItem(PreparedStatement ps, int batchCount) throws SQLException {
+                }
+
+                @Override
+                public void handleGeneratedIds(ResultSet rs, int count) throws SQLException {
+                }
+            });
+
+            // Opzionale: gestione del risultato dell'operazione
+            System.out.println("Tabella " + table + ": " + result[0] + " record eliminati.");
+        }
+    }
+
     /**
      *  metodo che permette di eseguire una query mandata in input
      * */

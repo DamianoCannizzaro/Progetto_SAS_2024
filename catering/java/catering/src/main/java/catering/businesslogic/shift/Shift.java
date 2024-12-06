@@ -30,7 +30,7 @@ public class Shift {
     private Date deadline;
     private boolean group = false;
     private String groupName = "";
-    private int id;
+    private int id ;
 
     //costruttore
     public Shift(int event_id, Time startTime, Time endTime, Date jobDate, Date deadline, boolean group, String groupName) {
@@ -42,6 +42,7 @@ public class Shift {
         this.group = group;
         if(group)this.groupName = groupName;
     }
+
 
 
 
@@ -60,7 +61,51 @@ public class Shift {
         return s;
     }
 
-    //TODO aggiungere persistenza mySQL
+
+    @Override
+    public String toString() {
+        return "Shift Details: {" +
+                "ID=" + id +
+                ", Event ID=" + event_id +
+                ", Start Time=" + (startTime != null ? startTime.toString() : "N/A") +
+                ", End Time=" + (endTime != null ? endTime.toString() : "N/A") +
+                ", Job Date=" + (jobDate != null ? jobDate.toString() : "N/A") +
+                ", Deadline=" + (deadline != null ? deadline.toString() : "N/A") +
+                ", Group=" + group +
+                ", Group Name='" + groupName + '\'' +
+                ", Table= catering.Shifts" +
+                '}';
+    }
+
+
+    //-----------------------PERSISTENCE METHODS------------------------------
+    public static void removeShift(Shift s) {
+            if (s == null || s.id <= 0) {
+                throw new IllegalArgumentException("Shift non valido o privo di ID.");
+            }
+
+            String deleteQuery = "DELETE FROM catering.Shifts WHERE id = ?;";
+            int[] result = PersistenceManager.executeBatchUpdate(deleteQuery, 1, new BatchUpdateHandler() {
+                @Override
+                public void handleBatchItem(PreparedStatement ps, int batchCount) throws SQLException {
+                    ps.setInt(1, s.id); // Usa l'ID del turno fornito dall'oggetto Shift
+                }
+
+                @Override
+                public void handleGeneratedIds(ResultSet rs, int count) throws SQLException {
+                    // Non è necessario gestire gli ID generati in un'operazione di DELETE
+                }
+            });
+
+            // Opzionale: gestione del risultato dell'operazione
+            if (result[0] == 0) {
+                System.out.println("Nessun turno trovato con l'ID fornito: " + s.id);
+            } else {
+                System.out.println("Turno con ID " + s.id + " eliminato con successo.");
+            }
+        }
+
+
     public static void saveNewShift(Shift s) {
         String newS = "INSERT INTO catering.Shifts (event_id, startTime, endTime, jobDate, deadLine, `group`, groupName) VALUES (?, ?, ?, ?, ?, ?, ?);";
         int[] result = PersistenceManager.executeBatchUpdate(newS, 1, new BatchUpdateHandler() {
