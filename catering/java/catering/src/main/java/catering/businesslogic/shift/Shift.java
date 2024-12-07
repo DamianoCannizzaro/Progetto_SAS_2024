@@ -64,17 +64,16 @@ public class Shift {
 
     @Override
     public String toString() {
-        return "Shift Details: {" +
+        return "Shift Details: " +
                 "ID=" + id +
-                ", Event ID=" + event_id +
-                ", Start Time=" + (startTime != null ? startTime.toString() : "N/A") +
-                ", End Time=" + (endTime != null ? endTime.toString() : "N/A") +
-                ", Job Date=" + (jobDate != null ? jobDate.toString() : "N/A") +
-                ", Deadline=" + (deadline != null ? deadline.toString() : "N/A") +
-                ", Group=" + group +
-                ", Group Name='" + groupName + '\'' +
-                ", Table= catering.Shifts" +
-                '}';
+                "\n Event ID=" + event_id +
+                "\n Start Time=" + (startTime != null ? startTime.toString() : "N/A") +
+                "\n End Time=" + (endTime != null ? endTime.toString() : "N/A") +
+                "\n Job Date=" + (jobDate != null ? jobDate.toString() : "N/A") +
+                "\n Deadline=" + (deadline != null ? deadline.toString() : "N/A") +
+                "\n Group=" + group +
+                "\n Group Name='" + groupName + '\'' +
+                "\n Table= catering.Shifts";
     }
 
 

@@ -43,7 +43,6 @@ public abstract class ShiftTable {
     public Shift updateShift(Shift s, Time startTime, Time endTime, Date jobDate, Date deadline, boolean group, String groupName) {
         return s.UpdateShift(s, startTime, endTime, jobDate, deadline, group, groupName);
     }
-//FIXME: grande errore porcoddio i turni sono tutti mischiati e non vanno nelle tabelle specifiche diocanaglia cazzo io de dio
     //TODO: aggiungere metodo elimina turno; done
     public void deleteShift(Shift s) {
         Shifts.remove(s);
@@ -100,15 +99,24 @@ public abstract class ShiftTable {
     }
 
     public void testString() {
+        String t = "";
+        if(type.equals("c")){
+            System.out.println("Tabella dei turni di Cucina:");
+            t = type;
+        }else {
+            System.out.println("Tabella dei turni di Servizio:");
+            t = type;
+        }
         System.out.printf("%-10s  | %-20s | %-1s | %-10s | %s\n  ", "id", "Evento", "tipo", "proprietario", "ordine");
-        System.out.println("--------------------------------------------");
         for (Map.Entry<Integer, ShiftTable> entry : loadedTables.entrySet()) {
             int chiave = entry.getKey();
             ShiftTable val = entry.getValue();
-            for (Shift shift : Shifts) {
-                System.out.println(shift.toString());
-            }
+            if (val.type.equals(t)) {
             System.out.printf("%-10s | %s\n", chiave, val.toString());
+            }
+        }
+        for (Shift shift : this.Shifts) {
+            System.out.println(shift.toString());
         }
     }
 

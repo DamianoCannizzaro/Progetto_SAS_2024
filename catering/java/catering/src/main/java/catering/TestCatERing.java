@@ -92,22 +92,28 @@ public class TestCatERing {
             System.out.println("Done.");
 
             System.out.println("\nTEST CREATE NEW SHIFTS");
-            Time sT = Time.valueOf("15:30:00");
-            Time CsT = Time.valueOf("12:25:00");
-            Time eT = Time.valueOf("18:30:00");
+            Time sT1 = Time.valueOf("15:30:00");
+            Time st2 = Time.valueOf("16:00:00");
+            Time eT1 = Time.valueOf("18:30:00");
+            Time et2 = Time.valueOf("20:00:00");
             Date jd = Date.valueOf("2024-11-22");
-            Date deadline = Date.valueOf("2024-11-20");
+            Date dl1 = Date.valueOf("2024-11-20");
+            Date dl2 = Date.valueOf("2024-11-19");
             boolean g1 = true;
             boolean g2 = false;
             String gn = "Beppe Storaci";
-            Shift newCS = CatERing.getInstance().getShiftManager().addShiftToTable(cst,CsT,eT,jd,deadline,g1, gn);
+            Shift newCS = CatERing.getInstance().getShiftManager().addShiftToTable(cst,sT1,eT1,jd,dl1,g1, gn);
             System.out.println("New Cook Shift Created: \n" + newCS);
-            Shift newSS = CatERing.getInstance().getShiftManager().addShiftToTable(sst,sT,eT,jd,deadline,g2, gn);
+            Shift newSS = CatERing.getInstance().getShiftManager().addShiftToTable(sst,st2,et2,jd,dl2,g2, gn);
             System.out.println("New service shift created: \n" + newSS);
+            CatERing.getInstance().getShiftManager().addShiftToTable(cst,st2,et2,jd,dl2,g2, gn);
+            System.out.println("----------------------------------");
             System.out.println("Cook Shift Table.");
             cst.testString();
+            System.out.println("----------------------------------");
             System.out.println("Service Shift Table.");
             sst.testString();
+            System.out.println("----------------------------------");
             //----------------TEST DELETE SHIFT---------------------
             CatERing.getInstance().getShiftManager().deleteShift(newCS,cst);
             cst.testString();
