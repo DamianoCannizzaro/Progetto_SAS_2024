@@ -107,14 +107,15 @@ public class TestCatERing {
             Shift newSS = CatERing.getInstance().getShiftManager().addShiftToTable(sst,st2,et2,jd,dl2,g2, gn);
             System.out.println("New service shift created: \n" + newSS);
             CatERing.getInstance().getShiftManager().addShiftToTable(cst,st2,et2,jd,dl2,g2, gn);
-            System.out.println("----------------------------------");
+            System.out.println("------------------------------------------------------------------------------------------------------");
             System.out.println("Cook Shift Table.");
             cst.testString();
-            System.out.println("----------------------------------");
+            System.out.println("------------------------------------------------------------------------------------------------------");
             System.out.println("Service Shift Table.");
             sst.testString();
-            System.out.println("----------------------------------");
+            System.out.println("------------------------------------------------------------------------------------------------------");
             //----------------TEST DELETE SHIFT---------------------
+            System.out.println("TEST DELETE SHIFT");
             CatERing.getInstance().getShiftManager().deleteShift(newCS,cst);
             cst.testString();
             //CatERing.getInstance().getShiftManager().deleteShift(newSS,sst);

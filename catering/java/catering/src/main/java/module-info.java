@@ -9,4 +9,6 @@ module catering {
     opens catering.ui.menu to javafx.fxml;
     opens catering.ui.general to javafx.fxml;
     exports catering;
+    exports TestingShifts;
+    opens TestingShifts to javafx.fxml;
 }

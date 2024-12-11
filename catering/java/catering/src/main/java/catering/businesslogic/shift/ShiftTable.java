@@ -29,12 +29,9 @@ public abstract class ShiftTable {
         return Shifts.isEmpty();
     }
 
-    public ShiftTable checkTable(ShiftTable st) {
-        return st;
-    }
 
     public Shift addShift(ShiftTable st, Time startTime, Time endTime, Date jobDate, Date deadline, boolean group, String groupName) {
-        Shift newS = new Shift(st.event.getId(), startTime, endTime, jobDate, deadline, group, groupName);
+        Shift newS = new Shift(st.event.getId(), st.type,startTime, endTime, jobDate, deadline, group, groupName);
         Shifts.add(newS);
         return newS;
 
@@ -43,7 +40,6 @@ public abstract class ShiftTable {
     public Shift updateShift(Shift s, Time startTime, Time endTime, Date jobDate, Date deadline, boolean group, String groupName) {
         return s.UpdateShift(s, startTime, endTime, jobDate, deadline, group, groupName);
     }
-    //TODO: aggiungere metodo elimina turno; done
     public void deleteShift(Shift s) {
         Shifts.remove(s);
     }
@@ -54,7 +50,7 @@ public abstract class ShiftTable {
         }
         return st;
     }
-    //TODO:
+
 
     public ObservableList<Shift> getShifts() {
         return Shifts;

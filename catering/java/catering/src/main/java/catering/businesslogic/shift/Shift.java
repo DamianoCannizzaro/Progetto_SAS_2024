@@ -21,8 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Shift {
-
-    //fixme aggiornare usando variabile per orario corretto
+    private final String type;
     private final int event_id;
     private Time startTime;
     private Time endTime;
@@ -33,8 +32,9 @@ public class Shift {
     private int id ;
 
     //costruttore
-    public Shift(int event_id, Time startTime, Time endTime, Date jobDate, Date deadline, boolean group, String groupName) {
+    public Shift(int event_id,String type, Time startTime, Time endTime, Date jobDate, Date deadline, boolean group, String groupName) {
         this.event_id = event_id;
+        this.type = type;
         this.startTime = startTime;
         this.endTime = endTime;
         this.jobDate = jobDate;
@@ -47,33 +47,34 @@ public class Shift {
 
 
     public Shift UpdateShift(Shift s, Time startTime, Time endTime, Date jobDate, Date deadline, boolean group, String groupName) {
-        if(s.startTime != startTime)s.startTime = startTime;
-        if(s.endTime != endTime)s.endTime = endTime;
-        if(s.jobDate != jobDate)s.jobDate = jobDate;
-        if(s.deadline != deadline && deadline.before(jobDate))s.deadline = deadline;
+        if(s.startTime != startTime && startTime !=null)s.startTime = startTime;
+        if(s.endTime != endTime && endTime !=null)s.endTime = endTime;
+        if(s.jobDate != jobDate && jobDate!=null)s.jobDate = jobDate;
+        if(s.deadline != deadline && deadline.before(jobDate) && jobDate !=null)s.deadline = deadline;
         if(group) s.group = true;
-        if(!s.groupName.equals(groupName) && group) {
+        if(!s.groupName.equals(groupName) && group && groupName !=null) {
             s.groupName = groupName;
         }else if (!group) {
             s.group = false;
-            s.groupName = "";
+            s.groupName = null;
         }
         return s;
     }
 
+    public String getType() {return type;}
 
     @Override
     public String toString() {
         return "Shift Details: " +
                 "ID=" + id +
                 "\n Event ID=" + event_id +
+                "\n Type=" + type +
                 "\n Start Time=" + (startTime != null ? startTime.toString() : "N/A") +
                 "\n End Time=" + (endTime != null ? endTime.toString() : "N/A") +
                 "\n Job Date=" + (jobDate != null ? jobDate.toString() : "N/A") +
                 "\n Deadline=" + (deadline != null ? deadline.toString() : "N/A") +
-                "\n Group=" + group +
-                "\n Group Name='" + groupName + '\'' +
-                "\n Table= catering.Shifts";
+                "\n Group=" + (group ? true : "N/A") +
+                "\n Group Name=" +  (groupName != null ? "\'" + groupName + "\'" : "N/A") ;
     }
 
 

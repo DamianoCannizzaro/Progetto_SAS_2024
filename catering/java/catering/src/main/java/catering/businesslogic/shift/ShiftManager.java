@@ -65,6 +65,10 @@ public class ShiftManager {
     public void setCurrentSShiftTable(ShiftTable currentST) {
         this.currServiceSTable = currentST;
     }
+    public ShiftTable getCurrentTableFromShift(Shift s){
+        if (s.getType().equals("c")) {return currCookSTable;}
+        else return currServiceSTable;
+    }
 
  /** Metodo per aggiungere un turno alla tabella corrispettiva.
   * Si effettua un controllo sul parametro type e viene aggiornata
