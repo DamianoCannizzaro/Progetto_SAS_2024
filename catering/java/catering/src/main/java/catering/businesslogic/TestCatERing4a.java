@@ -1,6 +1,4 @@
-package catering;
-import catering.businesslogic.CatERing;
-import catering.businesslogic.UseCaseLogicException;
+package catering.businesslogic;
 import catering.businesslogic.menu.Menu;
 import catering.businesslogic.menu.MenuItem;
 import catering.businesslogic.menu.Section;
@@ -12,7 +10,7 @@ public class TestCatERing4a {
         try {
             /* System.out.println("TEST DATABASE CONNECTION");
             PersistenceManager.testSQLConnection();*/
-            CatERing.getInstance().getUserManager().fakeLogin("Lidia");
+            CatERing.getInstance().getUserManager().login("Lidia");
             System.out.println(CatERing.getInstance().getUserManager().getCurrentUser());
             Menu m = CatERing.getInstance().getMenuManager().createMenu("Menu Pinco Pallino");
             Section antipasti = CatERing.getInstance().getMenuManager().defineSection("Antipasti");

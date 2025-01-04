@@ -7,20 +7,28 @@ import catering.businesslogic.menu.Section;
 import catering.businesslogic.recipe.Recipe;
 import catering.businesslogic.shift.Shift;
 import catering.businesslogic.shift.ShiftTable;
+import catering.businesslogic.user.User;
+import catering.persistence.PersistenceManager;
 import javafx.collections.ObservableList;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.util.Scanner;
 
-public class TestCatERing3c {
+public class TestCatERing1b {
     public static void main(String[] args) {
         try {
-            /* System.out.println("TEST DATABASE CONNECTION");
-            PersistenceManager.testSQLConnection();*/
-            CatERing.getInstance().getUserManager().login("Lidia");
-            System.out.println(CatERing.getInstance().getUserManager().getCurrentUser());
+            Scanner in = new Scanner(System.in);
+            System.out.println("TEST CLEANUP TABLES");
+            PersistenceManager.clearAllTables();
+            System.out.println("TEST DATABASE CONNECTION");
+            PersistenceManager.testSQLConnection();
+            System.out.print("SCEGLI ACCOUNT CON CUI FARE LOGIN: ");
+            CatERing.getInstance().getUserManager().login(in.nextLine());
+            User currUser = CatERing.getInstance().getUserManager().getCurrentUser();
+            System.out.println(currUser);
 
-            Menu m = CatERing.getInstance().getMenuManager().createMenu("Menu di Lidia");
+            Menu m = CatERing.getInstance().getMenuManager().createMenu("Menu di " + currUser.getUserName());
 
             Section antipasti = CatERing.getInstance().getMenuManager().defineSection("Antipasti");
             Section primi = CatERing.getInstance().getMenuManager().defineSection("Primi");
@@ -54,20 +62,40 @@ public class TestCatERing3c {
             boolean g1 = true;
             boolean g2 = false;
             String gn = "Brigata blu";
-            Shift newCS = CatERing.getInstance().getShiftManager().addShiftToTable(cst,sT1,eT1,jd,dl1,g1, gn);
-            Shift newSS = CatERing.getInstance().getShiftManager().addShiftToTable(sst,st2,et2,jd,dl2,g2, gn);
+            Shift cookShift = CatERing.getInstance().getShiftManager().addShiftToTable(cst,sT1,eT1,jd,dl1,g1, gn);
+            Shift serviceShift = CatERing.getInstance().getShiftManager().addShiftToTable(sst,st2,et2,jd,dl2,g2, gn);
             CatERing.getInstance().getShiftManager().addShiftToTable(cst,st2,et2,jd,dl2,g2, gn);
             System.out.println("\nSHIFT CREATI");
 
 
-            System.out.println("\nTEST DELETE SHIFT");
-            System.out.println("\nSHIFT TABLE INIZIALE");
-            cst.testString();
-            System.out.println("\nSHIFT TABLE FINALE");
-            CatERing.getInstance().getShiftManager().deleteShift(newCS,cst);
-            cst.testString();
+            System.out.println("\nTEST ADD RECURRING TABLE");
+            //creo nuove date per la ricorrenza
+            Date d1 = Date.valueOf("2025-1-1");
+            Date d2 = Date.valueOf("2025-1-5");
+            Date d3 = Date.valueOf("2025-1-10");
+
+
+            Date[] Dates = {d1,d2};
+            CatERing.getInstance().getShiftManager().addRecurringTable(cst,Dates);
+            System.out.println("\nRECURRING TABLE CREATE");
+            System.out.println("\nTEST RICORRENZA DA DATA");
+            CatERing.getInstance().getShiftManager().printRecurringTable(cst);
+            System.out.println("\nTEST UPDATE INSTANCE");
+            Date[] dateToUpdate = {d2};
+            Date[] dateUpdate = {Date.valueOf("2342-2-13")};
+            CatERing.getInstance().getShiftManager().updateInstanceInRecurring(cst,dateToUpdate,dateUpdate);
+            CatERing.getInstance().getShiftManager().printRecurringTable(cst);
+            System.out.println("\nTEST DELETE RECURRING TABLE");
+            Date[] dateToRemove = {d1};
+            CatERing.getInstance().getShiftManager().removeInstanceRecurringTable(cst,dateToRemove);
+            CatERing.getInstance().getShiftManager().printRecurringTable(cst);
+
+
+
+
+
         } catch (UseCaseLogicException e) {
-            System.out.println("Errore di logica nello use case");
+            System.out.println("Errore di logica nello use case: " + e.getErrorDetails());
         }
     }
 }

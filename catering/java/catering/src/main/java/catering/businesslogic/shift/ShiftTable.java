@@ -23,13 +23,18 @@ public abstract class ShiftTable {
     protected boolean order;
     User owner;
     protected ObservableList<Shift> Shifts = FXCollections.observableArrayList();
-    protected final ObservableMap<ShiftTable, Date> recurringTable = FXCollections.observableHashMap();
+    protected final ObservableMap<Date, ShiftTable> recurringTable = FXCollections.observableHashMap();
+
 
     public boolean isEmpty() {
         return Shifts.isEmpty();
     }
-
-
+    public ObservableList<Shift> getShifts() {
+        return Shifts;
+    }
+    public ShiftTable checkTable(ShiftTable st) {return openShiftTable(st);}
+    
+    
     public Shift addShift(ShiftTable st, Time startTime, Time endTime, Date jobDate, Date deadline, boolean group, String groupName) {
         Shift newS = new Shift(st.event.getId(), st.type,startTime, endTime, jobDate, deadline, group, groupName);
         Shifts.add(newS);
@@ -43,26 +48,35 @@ public abstract class ShiftTable {
     public void deleteShift(Shift s) {
         Shifts.remove(s);
     }
-    //TODO: aggiungere metodo tabella ricorrente; done
-    public ShiftTable addRecurringTable(ShiftTable st, Date[] dates) {
-        for (int i = 0; i < dates.length; i++) {
-            recurringTable.put(st, dates[i]);
+
+
+
+
+    public void addRecurringTable(ShiftTable st, Date date) {
+            recurringTable.put(date,st);
+    }
+    public void removeInstanceRecurringTable(Date date) {
+            recurringTable.remove(date);
+     }
+
+    public void updateInstanceInRecurring(Date[] dateToUpdate, Date[] dateUpdate) {
+    for (int i =0; i<dateToUpdate.length; i++) {
+        recurringTable.remove(dateToUpdate[i]);
+        recurringTable.put(dateUpdate[i],this);
+    }
+
+    }
+
+    public void printRecurringTable() {
+        for ( var entry : recurringTable.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
         }
-        return st;
     }
 
 
-    public ObservableList<Shift> getShifts() {
-        return Shifts;
-    }
-
-    public ObservableMap<ShiftTable, Date> getRecurringTable() {
-        return recurringTable;
-    }
 
 
     //PERSISTENCE AND FORMAT METHODS
-
     public static void saveNewShiftTable(ShiftTable st) {
         String stInsert = "INSERT INTO catering.ShiftTables (event, ev_type, owner_id, `order`) VALUES (?, ?, ?, ?);";
         int[] result = PersistenceManager.executeBatchUpdate(stInsert, 1, new BatchUpdateHandler() {
@@ -81,13 +95,78 @@ public abstract class ShiftTable {
                 }
             }
         });
-        //TODO: altri salvataggi da aggiungere allo shift (singoli turni e altro poi vedi)
-
         if (result[0] > 0) {
             loadedTables.put(st.id, st);
         }
 
     }
+    public static ShiftTable openShiftTable(ShiftTable st) {
+        String strST = "SELECT * FROM catering.ShiftTables WHERE event = ? AND ev_type = ? AND owner_id = ? AND `order` = ?;";
+        int[] result = PersistenceManager.executeBatchUpdate(strST, 1, new BatchUpdateHandler() {
+                    @Override
+                    public void handleBatchItem(PreparedStatement ps, int batchCount) throws SQLException {
+                        ps.setString(1, PersistenceManager.escapeString(st.event.getName()));
+                        ps.setString(2, PersistenceManager.escapeString(st.type));
+                        ps.setInt(3, st.owner.getId());
+                        ps.setBoolean(4, st.order);
+                        ResultSet rs = ps.executeQuery();
+
+                        while(rs.next()){
+                            int id = rs.getInt("id");
+                            String event = rs.getString("event");
+                            String evType = rs.getString("ev_type");
+                            int ownerId = rs.getInt("owner_id");
+                            Boolean order = rs.getBoolean("order");
+
+                            System.out.printf("%d | %s | %s | %d | %b\n",id ,event, evType, ownerId, order);
+                        }
+                    }
+                    @Override
+                    public void handleGeneratedIds(ResultSet rs, int count) throws SQLException {
+                    }
+                }
+        );
+        return st;
+    }
+
+    public static void addRecurringTableToDB(ShiftTable st, Date date) {
+        String strIn = "INSERT INTO catering.RecurringTable (ShiftTable_id, recurrence_date)VALUES(?, ?);";
+        int[] result = PersistenceManager.executeBatchUpdate(strIn, 1, new BatchUpdateHandler() {
+            @Override
+            public void handleBatchItem(PreparedStatement ps, int batchCount) throws SQLException {
+                ps.setInt(1,st.id);
+                ps.setDate(2, (java.sql.Date) date);
+            }
+
+            @Override
+            public void handleGeneratedIds(ResultSet rs, int count) throws SQLException {
+
+            }
+        });
+
+    }
+
+    public static void removeRecurringTable(ShiftTable st, Date date) {
+        String strRemove  = "DELETE FROM catering.RecurringTable where id = ? AND date = ?";
+        int[] result = PersistenceManager.executeBatchUpdate(strRemove, 1, new BatchUpdateHandler() {
+            @Override
+            public void handleBatchItem(PreparedStatement ps, int batchCount) throws SQLException {
+                ps.setInt(1,st.id);
+                ps.setDate(2, (java.sql.Date) date);
+            }
+
+            @Override
+            public void handleGeneratedIds(ResultSet rs, int count) throws SQLException {
+                // Non è necessario gestire gli ID generati in un'operazione di DELETE
+            }
+        });
+        if (result[0] == 0) {
+            System.out.println("Nessuna ShiftTable trovata con l'ID fornito: " + st.id);
+        } else {
+            System.out.println("ShiftTable con ID " + st.id + " eliminata con successo.");
+        }
+    }
+
 
 
     public String toString() {
@@ -115,6 +194,7 @@ public abstract class ShiftTable {
             System.out.println(shift.toString());
         }
     }
+
 
 
 

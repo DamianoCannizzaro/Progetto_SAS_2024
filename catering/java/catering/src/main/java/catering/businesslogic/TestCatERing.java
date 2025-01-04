@@ -1,19 +1,16 @@
-package catering;
+package catering.businesslogic;
 
-import catering.businesslogic.CatERing;
-import catering.businesslogic.UseCaseLogicException;
 import catering.businesslogic.event.EventInfo;
 import catering.businesslogic.event.ServiceInfo;
 import catering.businesslogic.menu.Menu;
 import catering.businesslogic.menu.Section;
 import catering.businesslogic.recipe.Recipe;
-import catering.businesslogic.shift.CookShiftTable;
 import catering.businesslogic.shift.Shift;
 import catering.businesslogic.shift.ShiftTable;
+import catering.businesslogic.user.User;
 import catering.persistence.PersistenceManager;
 import javafx.collections.ObservableList;
 
-import java.sql.SQLOutput;
 import java.sql.Time;
 import java.util.Arrays;
 import java.sql.Date;
@@ -26,9 +23,9 @@ public class TestCatERing {
             PersistenceManager.clearAllTables();
              System.out.println("TEST DATABASE CONNECTION");
             PersistenceManager.testSQLConnection();
-            System.out.println("TEST FAKE LOGIN");
-            CatERing.getInstance().getUserManager().fakeLogin("Lidia");
-            System.out.println(CatERing.getInstance().getUserManager().getCurrentUser());
+            System.out.println("LOGIN");
+            CatERing.getInstance().getUserManager().login("Lidia");
+            User organizer =CatERing.getInstance().getUserManager().getCurrentUser();
 
             //--------------------Menu test section--------------------
 
@@ -84,6 +81,7 @@ public class TestCatERing {
             //--------------------Shift test section--------------------
             System.out.println("\nTEST CREATE SHIFT TABLES");
             EventInfo e = CatERing.getInstance().getEventManager().getEventInfoFromName("Convegno Agile Community");
+            e.AssignUser(organizer);
             System.out.println(e);
             ShiftTable cst = CatERing.getInstance().getShiftManager().createCookShiftTable("c", e);
             cst.testString();

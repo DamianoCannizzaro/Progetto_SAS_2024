@@ -17,12 +17,24 @@ public class EventInfo implements EventItemInfo {
     private Date dateEnd;
     private int participants;
     private User organizer;
+    private User chef;
 
-    private ObservableList<ServiceInfo> services;
+    private ObservableList<User> assignedUsers = FXCollections.observableArrayList();
+    private ObservableList<ServiceInfo> services = FXCollections.observableArrayList();
 
     public EventInfo(String name) {
         this.name = name;
         id = 0;
+    }
+
+    public EventInfo(String name, Date dateStart, Date dateEnd, int participants, User organizer, User chef) {
+        this.name = name;
+        this.dateStart = dateStart;
+        this.dateEnd = dateEnd;
+        this.participants = participants;
+        this.organizer = organizer;
+        this.chef = chef;
+
     }
 
     public ObservableList<ServiceInfo> getServices() {
@@ -34,6 +46,18 @@ public class EventInfo implements EventItemInfo {
     public Date getDateStart() {    return dateStart;}
     public int getParticipants() {  return participants;}
     public User getOrganizer() {    return this.organizer;}
+    public User getChef() {         return this.chef;}
+
+    public void AssignUser(User user) {
+        assignedUsers.add(user);
+    }
+
+    public boolean isAssigned(User user) {
+        return assignedUsers.contains(user);
+    }
+
+
+
 
     public String toString() {
         return name + ": " + dateStart + "-" + dateEnd + ", " + participants + " pp. (" + organizer.getUserName() + ")";
@@ -89,8 +113,5 @@ public class EventInfo implements EventItemInfo {
         return all;
     }
 
-    public boolean isAssigned(User user) {
-        //TODO: implementare controllo assegnazione user
-        return true;
-    }
+
 }

@@ -7,6 +7,8 @@ import catering.businesslogic.menu.Section;
 import catering.businesslogic.recipe.Recipe;
 import catering.businesslogic.shift.Shift;
 import catering.businesslogic.shift.ShiftTable;
+import catering.businesslogic.user.User;
+import catering.persistence.PersistenceManager;
 import javafx.collections.ObservableList;
 
 import java.sql.Date;
@@ -15,10 +17,12 @@ import java.sql.Time;
 public class TestCatERing3a {
     public static void main(String[] args) {
         try {
-            /* System.out.println("TEST DATABASE CONNECTION");
-            PersistenceManager.testSQLConnection();*/
-            CatERing.getInstance().getUserManager().fakeLogin("Lidia");
-            System.out.println(CatERing.getInstance().getUserManager().getCurrentUser());
+            System.out.println("TEST CLEANUP TABLES");
+            PersistenceManager.clearAllTables();
+             System.out.println("TEST DATABASE CONNECTION");
+            PersistenceManager.testSQLConnection();
+            CatERing.getInstance().getUserManager().login("Lidia");
+            User organizer = CatERing.getInstance().getUserManager().getCurrentUser();
 
             Menu m = CatERing.getInstance().getMenuManager().createMenu("Menu di Lidia");
 
@@ -40,6 +44,7 @@ public class TestCatERing3a {
             System.out.println(m.testString());
 
             EventInfo e = CatERing.getInstance().getEventManager().getEventInfoFromName("Convegno Agile Community");
+            e.AssignUser(organizer);
             ShiftTable cst = CatERing.getInstance().getShiftManager().createCookShiftTable("c", e);
             ShiftTable sst = CatERing.getInstance().getShiftManager().createServiceShiftTable("s", e);
             System.out.println("\nSHIFTTABLE CREATE");

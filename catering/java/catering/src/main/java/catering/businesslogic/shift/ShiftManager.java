@@ -4,12 +4,8 @@ import catering.businesslogic.CatERing;
 import catering.businesslogic.UseCaseLogicException;
 import catering.businesslogic.event.EventInfo;
 import catering.businesslogic.user.User;
-import catering.businesslogic.user.UserManager;
-import catering.persistence.ShiftPersistence;
-import catering.businesslogic.shift.ShiftManager;
 
 import java.sql.Time;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -24,39 +20,35 @@ public class ShiftManager {
 
 
     public ShiftTable createCookShiftTable(String type, EventInfo ev) throws UseCaseLogicException {
-        if (type.equals("c")) {
-            User user = CatERing.getInstance().getUserManager().getCurrentUser();
-            if (!user.isManager() || !ev.isAssigned(user)) throw new UseCaseLogicException();
+        User user = CatERing.getInstance().getUserManager().getCurrentUser();
+        if (!user.isManager() || !ev.isAssigned(user)) throw new UseCaseLogicException("UseCaseLogic Exception: user is not manager or not assigned ");
 
+        if (type.equals("c")) {
             ShiftTable cst = new CookShiftTable(type, ev, false);
-            this.setCurrentCShiftTable(cst);
-            this.notifyCookShiftTableCreated(cst);
+            setCurrentCShiftTable(cst);
+            notifyShiftTableCreated(cst);
 
             return cst;
         }
         else if (type.equals("s")) {
             System.out.println("Table type is " + type + ", redirecting to correct method");
             return createServiceShiftTable(type, ev);
-        } else throw new UseCaseLogicException();
+        } else throw new UseCaseLogicException("UseCaseLogic Exception: table type is not correct");
     }
 
     public ShiftTable createServiceShiftTable(String type, EventInfo ev) throws UseCaseLogicException {
+        User user = CatERing.getInstance().getUserManager().getCurrentUser();
+        if (!user.isManager() || !ev.isAssigned(user)) {throw new UseCaseLogicException("UseCaseLogic Exception: user is not manager or not assigned ");}
         if (type.equals("s")) {
-            User user = CatERing.getInstance().getUserManager().getCurrentUser();
-            if (!user.isManager() || !ev.isAssigned(user)) {
-                throw new UseCaseLogicException();
-            }
-
             ShiftTable sst = new ServiceShiftTable(type, ev, false);
-
-            this.setCurrentSShiftTable(sst);
-            this.notifyCookShiftTableCreated(sst);
+            setCurrentSShiftTable(sst);
+            notifyShiftTableCreated(sst);
 
             return sst;
         } else if (type.equals("c")) {
             System.out.println("Table type is " + type + ", redirecting to correct method");
             return createCookShiftTable(type, ev);
-        } else throw new UseCaseLogicException();
+        } else throw new UseCaseLogicException("UseCaseLogic Exception: table type is not correct");
     }
 
     public void setCurrentCShiftTable(ShiftTable currentST) {
@@ -65,6 +57,16 @@ public class ShiftManager {
     public void setCurrentSShiftTable(ShiftTable currentST) {
         this.currServiceSTable = currentST;
     }
+
+    public ShiftTable checkTable(ShiftTable currentST) throws UseCaseLogicException {
+       if(currentST == null) throw new UseCaseLogicException("UseCaseLogic Exception: Shift Table is null");
+        ShiftTable st = currentST.checkTable(currentST);
+       notifyTableOpened(st);
+       return st;
+    }
+
+
+
     public ShiftTable getCurrentTableFromShift(Shift s){
         if (s.getType().equals("c")) {return currCookSTable;}
         else return currServiceSTable;
@@ -80,12 +82,11 @@ public Shift addShiftToTable(ShiftTable st , Time startTime, Time endTime, Date 
             newShift = currCookSTable.addShift(st, startTime, endTime, jobDate, deadline, group, groupName );
     }else if(st.type.equals("s")) {
             newShift = currServiceSTable.addShift(st, startTime, endTime, jobDate, deadline, group, groupName );
-    } else throw new UseCaseLogicException();
+    } else throw new UseCaseLogicException("UseCaseLogic Exception: table type is not correct");
 
         notifyShiftCreated(newShift);
         return newShift;
 }
-    //TODO: aggiungere metodo eliminazione turno da tabella
     public void deleteShift(Shift s,ShiftTable st) {
     if(st.type.equals("c")) {
         currCookSTable.deleteShift(s);
@@ -98,17 +99,41 @@ public Shift addShiftToTable(ShiftTable st , Time startTime, Time endTime, Date 
 
 
 
-    //TODO: aggiungere metodo modifica turno; done
+
     public Shift updateShift(Shift s, ShiftTable st,  Time startTime, Time endTime, Date jobDate, Date deadline, boolean group, String groupName){
         return st.updateShift(s,startTime,endTime,jobDate,deadline,group,groupName);
     }
-    //TODO: aggiungere metodo tabella ricorrente; done
-    public ShiftTable addRecurringTable(ShiftTable st, Date[] dates) throws UseCaseLogicException {
-    if (dates == null || dates.length == 0) throw new UseCaseLogicException();
-    else return st.addRecurringTable(st,dates);
+
+    public void addRecurringTable(ShiftTable st, Date[] dates) throws UseCaseLogicException {
+        if (dates == null || dates.length == 0) throw new UseCaseLogicException("UseCaseLogic Exception: dates not set properly");
+        else {
+            for (Date date : dates){
+                st.addRecurringTable(st, date);
+            notifyRecurringTableAdded(st,date);
+            }
+        }
     }
 
 
+
+    public void updateInstanceInRecurring(ShiftTable st, Date[] dateToUpdate, Date[] dateUpdate) {
+    st.updateInstanceInRecurring(dateToUpdate, dateUpdate);
+    }
+
+    public void printRecurringTable(ShiftTable st) {
+        st.printRecurringTable();
+    }
+
+    public void removeInstanceRecurringTable(ShiftTable st, Date[] dates) throws UseCaseLogicException {
+        if (dates == null || dates.length == 0) throw new UseCaseLogicException("UseCaseLogic Exception: dates not set properly");
+        for (Date date: dates) {
+            st.removeInstanceRecurringTable(date);
+            notifyRecurringTableRemoved(st,date);
+        }
+    }
+
+
+//TODO: aggiungere persistence delle tabelle ricorrenti
     //--------------------Notify methods-----------------------------
 
     private void notifyShiftCreated(Shift newShift) {
@@ -122,12 +147,31 @@ public Shift addShiftToTable(ShiftTable st , Time startTime, Time endTime, Date 
     }
     }
 
-    private void notifyCookShiftTableCreated(ShiftTable cst) {
+    private void notifyShiftTableCreated(ShiftTable st) {
         for (ShiftEventReceiver er: eventReceivers) {
-            er.updateCShiftTableCreated(cst);
+            er.updateShiftTableCreated(st);
+        }
+    }
+    private void notifyTableOpened(ShiftTable st) {
+        for (ShiftEventReceiver er : eventReceivers) {
+            er.updateTableOpened(st);
         }
     }
 
+    private void notifyRecurringTableAdded(ShiftTable st, Date date) {
+    for (ShiftEventReceiver er: eventReceivers){
+        er.updateRecurringTableAdded(st,date);
+    }
+    }
+
+    private void notifyRecurringTableRemoved(ShiftTable st, Date date) {
+        for (ShiftEventReceiver er : eventReceivers){
+            er.updateRecurringTableRemoved(st,date);
+        }
+    }
     public void addEventReceiver(ShiftEventReceiver rec) { this.eventReceivers.add(rec); }
     public void removeEventReceiver(ShiftEventReceiver rec) { this.eventReceivers.remove(rec); }
+
+
+
 }

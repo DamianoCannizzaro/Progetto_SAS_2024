@@ -1,18 +1,16 @@
-package catering;
-import catering.businesslogic.CatERing;
-import catering.businesslogic.UseCaseLogicException;
+package catering.businesslogic;
 import catering.businesslogic.menu.Menu;
 import catering.businesslogic.menu.MenuItem;
 import catering.businesslogic.menu.Section;
 import catering.businesslogic.recipe.Recipe;
 import javafx.collections.ObservableList;
 
-public class TestCatERing4c {
+public class TestCatERing4b {
     public static void main(String[] args) {
         try {
             /* System.out.println("TEST DATABASE CONNECTION");
             PersistenceManager.testSQLConnection();*/
-            CatERing.getInstance().getUserManager().fakeLogin("Lidia");
+            CatERing.getInstance().getUserManager().login("Lidia");
             System.out.println(CatERing.getInstance().getUserManager().getCurrentUser());
             Menu m = CatERing.getInstance().getMenuManager().createMenu("Menu Pinco Pallino");
             Section antipasti = CatERing.getInstance().getMenuManager().defineSection("Antipasti");
@@ -24,15 +22,15 @@ public class TestCatERing4c {
             CatERing.getInstance().getMenuManager().insertItem(recipes.get(1), antipasti);
             CatERing.getInstance().getMenuManager().insertItem(recipes.get(2), antipasti);
             MenuItem it2 = CatERing.getInstance().getMenuManager().insertItem(recipes.get(6), secondi);
-            MenuItem it3 = CatERing.getInstance().getMenuManager().insertItem(recipes.get(7), secondi);
+            CatERing.getInstance().getMenuManager().insertItem(recipes.get(7), secondi);
             CatERing.getInstance().getMenuManager().insertItem(recipes.get(3));
             MenuItem freeit = CatERing.getInstance().getMenuManager().insertItem(recipes.get(4));
             System.out.println(m.testString());
 
-            System.out.println("\nTEST REMOVE ITEM");
-            CatERing.getInstance().getMenuManager().deleteItem(it1);
-            CatERing.getInstance().getMenuManager().deleteItem(it2);
-            CatERing.getInstance().getMenuManager().deleteItem(freeit);
+            System.out.println("\nTEST CHANGE ITEM DESCRIPTION");
+            it1.setDescription("Nuovo antipasto");
+            it2.setDescription("Nuovo secondo");
+            freeit.setDescription("Nuovo piatto unico");
             System.out.println(m.testString());
 
         } catch (UseCaseLogicException ex) {

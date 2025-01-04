@@ -44,6 +44,7 @@ public class Shift {
     }
 
 
+    public Date getJobDate() {return jobDate;}
 
 
     public Shift UpdateShift(Shift s, Time startTime, Time endTime, Date jobDate, Date deadline, boolean group, String groupName) {
@@ -79,34 +80,7 @@ public class Shift {
 
 
     //-----------------------PERSISTENCE METHODS------------------------------
-    public static void removeShift(Shift s) {
-            if (s == null || s.id <= 0) {
-                throw new IllegalArgumentException("Shift non valido o privo di ID.");
-            }
-
-            String deleteQuery = "DELETE FROM catering.Shifts WHERE id = ?;";
-            int[] result = PersistenceManager.executeBatchUpdate(deleteQuery, 1, new BatchUpdateHandler() {
-                @Override
-                public void handleBatchItem(PreparedStatement ps, int batchCount) throws SQLException {
-                    ps.setInt(1, s.id); // Usa l'ID del turno fornito dall'oggetto Shift
-                }
-
-                @Override
-                public void handleGeneratedIds(ResultSet rs, int count) throws SQLException {
-                    // Non è necessario gestire gli ID generati in un'operazione di DELETE
-                }
-            });
-
-            // Opzionale: gestione del risultato dell'operazione
-            if (result[0] == 0) {
-                System.out.println("Nessun turno trovato con l'ID fornito: " + s.id);
-            } else {
-                System.out.println("Turno con ID " + s.id + " eliminato con successo.");
-            }
-        }
-
-
-    public static void saveNewShift(Shift s) {
+        public static void saveNewShift(Shift s) {
         String newS = "INSERT INTO catering.Shifts (event_id, startTime, endTime, jobDate, deadLine, `group`, groupName) VALUES (?, ?, ?, ?, ?, ?, ?);";
         int[] result = PersistenceManager.executeBatchUpdate(newS, 1, new BatchUpdateHandler() {
             @Override
@@ -129,4 +103,32 @@ public class Shift {
         });
 
     }
+
+    public static void removeShift(Shift s) {
+        if (s == null || s.id <= 0) {
+            throw new IllegalArgumentException("Shift non valido o privo di ID.");
+        }
+
+        String deleteQuery = "DELETE FROM catering.Shifts WHERE id = ?;";
+        int[] result = PersistenceManager.executeBatchUpdate(deleteQuery, 1, new BatchUpdateHandler() {
+            @Override
+            public void handleBatchItem(PreparedStatement ps, int batchCount) throws SQLException {
+                ps.setInt(1, s.id); // Usa l'ID del turno fornito dall'oggetto Shift
+            }
+
+            @Override
+            public void handleGeneratedIds(ResultSet rs, int count) throws SQLException {
+                // Non è necessario gestire gli ID generati in un'operazione di DELETE
+            }
+        });
+
+        // Opzionale: gestione del risultato dell'operazione
+        if (result[0] == 0) {
+            System.out.println("Nessun turno trovato con l'ID fornito: " + s.id);
+        } else {
+            System.out.println("Turno con ID " + s.id + " eliminato con successo.");
+        }
+    }
+
+
 }
