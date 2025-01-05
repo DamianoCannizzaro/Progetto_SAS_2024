@@ -10,4 +10,6 @@ public class UserManager {
     public User getCurrentUser() {
         return this.currentUser;
     }
+
+    public User getUser(String username) {return User.loadUser(username);}
 }

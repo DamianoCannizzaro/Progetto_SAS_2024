@@ -39,8 +39,6 @@ public class User {
         return this.id;
     }
 
-    //TODO: aggiungere metodo conferma partecipazione
-    //TODO: aggiungere metodo mailconferma
 
 
     public String toString() {

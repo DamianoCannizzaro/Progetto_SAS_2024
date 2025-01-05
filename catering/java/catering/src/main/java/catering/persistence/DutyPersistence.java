@@ -1,6 +1,5 @@
 package catering.persistence;
 
-//TODO: classe DutyPersistence da completare con le dichiarazioni
 
 import catering.businesslogic.duty.DutyEventReceiver;
 import catering.businesslogic.duty.DutySheet;
@@ -12,9 +11,18 @@ public class DutyPersistence implements DutyEventReceiver {
     public void updateDutySheetCreated(DutySheet ds) {DutySheet.saveNewDutySheet(ds); }
     public void updateDutySheetOpened(DutySheet ds) {DutySheet.openDutySheetFromDB(ds);}
 
+
     @Override
     public void updateTaskCreated(Task task) {Task.saveNewTask(task);}
-    public void updateTaskRearranged(Task task, int position) {Task.updateTaskPosition(task,position);}
+    public void updateTaskDeleted(Task task){Task.deleteTask(task);}
+    public void updateTaskRearranged(Task taskToMove,int position) {Task.updateTaskPosition(taskToMove,position);}
     public void updateTaskAssigned(Task task, User[] staff) {Task.saveTaskAssigned(task,staff);}
+    public void updateAssignmentRemoved(Task task,User[] staff) {Task.removeAssignmentFromDB(task,staff);}
     public void updateOverflowSet(Task task){Task.updateOverflowTask(task);}
+
+
+    @Override
+    public void updateDutySheetDeleted(DutySheet ds) {
+        DutySheet.deleteDutySheetFromDB(ds);
+    }
 }

@@ -60,9 +60,8 @@ public class ShiftManager {
 
     public ShiftTable checkTable(ShiftTable currentST) throws UseCaseLogicException {
        if(currentST == null) throw new UseCaseLogicException("UseCaseLogic Exception: Shift Table is null");
-        ShiftTable st = currentST.checkTable(currentST);
-       notifyTableOpened(st);
-       return st;
+       notifyTableOpened(currentST);
+       return currentST;
     }
 
 
@@ -127,13 +126,13 @@ public Shift addShiftToTable(ShiftTable st , Time startTime, Time endTime, Date 
     public void removeInstanceRecurringTable(ShiftTable st, Date[] dates) throws UseCaseLogicException {
         if (dates == null || dates.length == 0) throw new UseCaseLogicException("UseCaseLogic Exception: dates not set properly");
         for (Date date: dates) {
-            st.removeInstanceRecurringTable(date);
             notifyRecurringTableRemoved(st,date);
+            st.removeInstanceRecurringTable(date);
+
         }
     }
 
 
-//TODO: aggiungere persistence delle tabelle ricorrenti
     //--------------------Notify methods-----------------------------
 
     private void notifyShiftCreated(Shift newShift) {

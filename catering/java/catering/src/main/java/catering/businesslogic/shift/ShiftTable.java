@@ -8,10 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Time;
+import java.sql.*;
 import java.util.Date;
 import java.util.Map;
 
@@ -102,30 +99,31 @@ public abstract class ShiftTable {
     }
     public static ShiftTable openShiftTable(ShiftTable st) {
         String strST = "SELECT * FROM catering.ShiftTables WHERE event = ? AND ev_type = ? AND owner_id = ? AND `order` = ?;";
-        int[] result = PersistenceManager.executeBatchUpdate(strST, 1, new BatchUpdateHandler() {
-                    @Override
-                    public void handleBatchItem(PreparedStatement ps, int batchCount) throws SQLException {
-                        ps.setString(1, PersistenceManager.escapeString(st.event.getName()));
-                        ps.setString(2, PersistenceManager.escapeString(st.type));
-                        ps.setInt(3, st.owner.getId());
-                        ps.setBoolean(4, st.order);
-                        ResultSet rs = ps.executeQuery();
+        try (Connection conn = DriverManager.getConnection(PersistenceManager.getUrl(), PersistenceManager.getUsername(), PersistenceManager.getPassword());
+             PreparedStatement ps = conn.prepareStatement(strST)) {
 
-                        while(rs.next()){
-                            int id = rs.getInt("id");
-                            String event = rs.getString("event");
-                            String evType = rs.getString("ev_type");
-                            int ownerId = rs.getInt("owner_id");
-                            Boolean order = rs.getBoolean("order");
+            ps.setString(1, PersistenceManager.escapeString(st.event.getName()));
+            ps.setString(2, PersistenceManager.escapeString(st.type));
+            ps.setInt(3, st.owner.getId());
+            ps.setBoolean(4, st.order);
 
-                            System.out.printf("%d | %s | %s | %d | %b\n",id ,event, evType, ownerId, order);
-                        }
-                    }
-                    @Override
-                    public void handleGeneratedIds(ResultSet rs, int count) throws SQLException {
-                    }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String event = rs.getString("event");
+                    String evType = rs.getString("ev_type");
+                    int ownerId = rs.getInt("owner_id");
+                    boolean order = rs.getBoolean("order");
+
+                    System.out.printf("%-10s | %-20s | %-10s | %-10s | %s\n","id","event","ev_type","owner_id","order");
+                    System.out.printf("%-10d | %-20s | %-10s | %-10d | %b\n", id, event, evType, ownerId, order);
+
                 }
-        );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return st;
     }
 
@@ -147,7 +145,7 @@ public abstract class ShiftTable {
     }
 
     public static void removeRecurringTable(ShiftTable st, Date date) {
-        String strRemove  = "DELETE FROM catering.RecurringTable where id = ? AND date = ?";
+        String strRemove  = "DELETE FROM catering.RecurringTable WHERE ShiftTable_id = ? AND recurrence_date = ?";
         int[] result = PersistenceManager.executeBatchUpdate(strRemove, 1, new BatchUpdateHandler() {
             @Override
             public void handleBatchItem(PreparedStatement ps, int batchCount) throws SQLException {
@@ -160,10 +158,12 @@ public abstract class ShiftTable {
                 // Non è necessario gestire gli ID generati in un'operazione di DELETE
             }
         });
-        if (result[0] == 0) {
-            System.out.println("Nessuna ShiftTable trovata con l'ID fornito: " + st.id);
-        } else {
+        if (result != null && result.length > 0 && result[0] > 0) {
+            // Se almeno una riga è stata eliminata
             System.out.println("ShiftTable con ID " + st.id + " eliminata con successo.");
+        } else {
+            // Nessuna riga eliminata
+            System.out.println("Nessuna ShiftTable trovata con l'ID fornito: " + st.id);
         }
     }
 
@@ -182,12 +182,12 @@ public abstract class ShiftTable {
             System.out.println("Tabella dei turni di Servizio:");
             t = type;
         }
-        System.out.printf("%-10s  | %-20s | %-1s | %-10s | %s\n  ", "id", "Evento", "tipo", "proprietario", "ordine");
+        System.out.printf("%-10s | %-20s | %-1s | %-10s | %s\n  ", "id", "Evento", "tipo", "proprietario", "ordine");
         for (Map.Entry<Integer, ShiftTable> entry : loadedTables.entrySet()) {
             int chiave = entry.getKey();
             ShiftTable val = entry.getValue();
             if (val.type.equals(t)) {
-            System.out.printf("%-10s | %s\n", chiave, val.toString());
+            System.out.printf("%-10s | %s\n", chiave, val);
             }
         }
         for (Shift shift : this.Shifts) {

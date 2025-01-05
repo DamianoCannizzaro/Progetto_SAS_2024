@@ -1,27 +1,29 @@
 package catering.businesslogic.duty;
 
+import catering.businesslogic.CatERing;
 import catering.businesslogic.UseCaseLogicException;
 import catering.businesslogic.shift.Shift;
 import catering.businesslogic.user.User;
 import catering.persistence.BatchUpdateHandler;
 import catering.persistence.PersistenceManager;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.Arrays;
 
+
+
 public class Task {
+    private int id;
     private String name;
     private String description;
     private int qty;
     private boolean overflow;
     private int position;
-    private ObservableList<Shift> designedShifts;
-    private ObservableList<User> designedStaff;
+    private ObservableList<Shift> designedShifts = FXCollections.observableArrayList();
+    private ObservableList<User> designedStaff = FXCollections.observableArrayList();
 
     public Task(String name, String description, int qty) {
         this.name = name;
@@ -31,45 +33,78 @@ public class Task {
     }
 
     public int getPosition() { return position; }
+    public int getQty() { return qty; }
 
-
-
-    public void assignTask(Shift[] shift, User[] staff) throws UseCaseLogicException {
-        LocalDate dateNow = LocalDate.now();
-        Date date = Date.valueOf(dateNow);
-        for(Shift s : shift){
-            if (s.getJobDate().equals(date)){throw new UseCaseLogicException("UseCaseLogic Exception: cannot assign task scheduled for today");}
-
-            designedShifts.add(s);
-        }
+    public Task updateTask(String upName, String upDesc, int upQty) {
+        if (!upName.equals(this.name) && upName != null) this.name = upName;
+        if(!upDesc.equals(this.description) && upDesc!= null) this.description = upDesc;
+        if(upQty!=this.qty) this.qty = upQty;
+        return this;
+    }
+    public void assignTask(Shift[] shift, User[] staff) {
+        designedShifts.addAll(Arrays.asList(shift));
         designedStaff.addAll(Arrays.asList(staff));
     }
 
+    public void removeAssignment(User[] staff) {
+        designedStaff.removeAll(Arrays.asList(staff));
+    }
 
-    public Task setOverflow(boolean overflow, int qty, int guests) {
-        this.overflow = overflow;
+    public Task setOverflow( int qty, int guests) {
+        this.overflow = true;
         this.qty = qty -guests;
         return this;
     }
 
+    @Override
+    public String toString(){
+        return "Task Details: " +
+                "\nID= " +id +
+                "\nPosition= " +position+
+                "\nName= " + name +
+                "\nDescription= " + description+
+                "\nQuantity= " + qty+
+                "\nOverflow= " +overflow;
+
+    }
+
 //--------------------------PERSISTENCE METHODS-------------------------------
-    //TODO TODO TODO: Metodi di persistence relativi alle task
     public static void saveNewTask(Task task) {
-        String newT = "INSERT INTO catering.Tasks (name, description, qty, overflow) VALUES (?,?,?,?);";
+        String newT = "INSERT INTO catering.Tasks (position, name, description, qty, overflow) VALUES (?,?,?,?,?);";
         int[] result = PersistenceManager.executeBatchUpdate(newT, 1, new BatchUpdateHandler() {
             @Override
             public void handleBatchItem(PreparedStatement ps, int batchCount) throws SQLException {
-                ps.setString(1, task.name);
-                ps.setString(2, task.description);
-                ps.setInt(3, task.qty);
-                ps.setBoolean(4, task.overflow);
+                ps.setInt(1,task.position);
+                ps.setString(2, task.name);
+                ps.setString(3, task.description);
+                ps.setInt(4, task.qty);
+                ps.setBoolean(5, task.overflow);
             }
 
             @Override
             public void handleGeneratedIds(ResultSet rs, int count) throws SQLException {
                 if (count == 0){
-                    task.position = rs.getInt(1);
+                    task.id = rs.getInt(1);
+                    task.position = task.id;
+                    setPosition(task,task.id);
                 }
+            }
+        });
+    }
+    private static void setPosition(Task task, int pos){
+        String strPos = "UPDATE catering.Tasks SET position = ? WHERE name = ? AND description = ? AND qty = ?; ";
+        int[]result = PersistenceManager.executeBatchUpdate(strPos, 1, new BatchUpdateHandler() {
+            @Override
+            public void handleBatchItem(PreparedStatement ps, int batchCount) throws SQLException {
+                ps.setInt(1,pos);
+                ps.setString(2, task.name);
+                ps.setString(3, task.description);
+                ps.setInt(4,task.qty);
+            }
+
+            @Override
+            public void handleGeneratedIds(ResultSet rs, int count) throws SQLException {
+
             }
         });
     }
@@ -79,9 +114,9 @@ public class Task {
         int[] result = PersistenceManager.executeBatchUpdate(update, 1, new BatchUpdateHandler() {
             @Override
             public void handleBatchItem(PreparedStatement ps, int batchCount) throws SQLException {
-                ps.setInt(1, position);
+                ps.setInt(1,position);
                 ps.setString(2, task.name);
-                ps.setInt(1,task.position);
+                ps.setInt(3,task.position);
             }
 
             @Override
@@ -89,29 +124,55 @@ public class Task {
 
             }
         });
+        task.position = position;
     }
+    public static void deleteTask(Task task) {
+    String strDel = "DELETE FROM catering.Tasks Where id = ?;";
+    int[] result = PersistenceManager.executeBatchUpdate(strDel, 1, new BatchUpdateHandler() {
+        @Override
+        public void handleBatchItem(PreparedStatement ps, int batchCount) throws SQLException {
+            ps.setInt(1,task.id);
+        }
+
+        @Override
+        public void handleGeneratedIds(ResultSet rs, int count) throws SQLException {
+            //Non è necessario gestire ID generati in un operazione di DELETE
+        }
+    });
+    }
+
 
     public static int getTaskId(Task task) {
         String strID = "SELECT id FROM catering.tasks WHERE name = ? AND description = ? AND qty = ? AND overflow = ? AND position = ?";
-        int[] result = PersistenceManager.executeBatchUpdate(strID, 1, new BatchUpdateHandler() {
+        int taskId = -1; // Valore di default in caso di mancato recupero
 
-            @Override
-            public void handleBatchItem(PreparedStatement ps, int batchCount) throws SQLException {
-                ps.setString(1, task.name);
-                ps.setString(2, task.description);
-                ps.setInt(3, task.qty);
-                ps.setBoolean(4, task.overflow);
-                ps.setInt(5, task.getPosition());
+        try (Connection conn = DriverManager.getConnection(PersistenceManager.getUrl(), PersistenceManager.getUsername(), PersistenceManager.getPassword());
+             PreparedStatement ps = conn.prepareStatement(strID)) {
+
+            // Imposta i parametri della query
+            ps.setString(1, task.name);
+            ps.setString(2, task.description);
+            ps.setInt(3, task.qty);
+            ps.setBoolean(4, task.overflow);
+            ps.setInt(5, task.getPosition());
+
+            // Esegui la query
+            try (ResultSet rs = ps.executeQuery()) {
+                // Recupera l'ID dal ResultSet
+                if (rs.next()) {
+                    taskId = rs.getInt("id");
+                } else {
+                    System.out.println("Nessuna task trovata con i criteri forniti.");
+                }
             }
 
-            @Override
-            public void handleGeneratedIds(ResultSet rs, int count) throws SQLException {
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-            }
-        });
-
-                return 1;
+        return taskId;
     }
+
 
     public static void saveTaskAssigned(Task task, User[] staff) {
         for (User user : staff) {
@@ -134,6 +195,23 @@ public class Task {
             });
         }
     }
+    public static void removeAssignmentFromDB(Task task, User[] staff) {
+        for (User user : staff) {
+            String strDel = "DELETE FROM catering.taskassignment WHERE task_id = ? AND user_id = ?;";
+            int[] result = PersistenceManager.executeBatchUpdate(strDel, 1, new BatchUpdateHandler() {
+                @Override
+                public void handleBatchItem(PreparedStatement ps, int batchCount) throws SQLException {
+                    ps.setInt(1, task.id);
+                    ps.setInt(2, user.getId());
+                }
+
+                @Override
+                public void handleGeneratedIds(ResultSet rs, int count) throws SQLException {
+                    //Non è necessario gestire ID generati in un operazione di DELETE
+                }
+            });
+        }
+    }
     public static void updateOverflowTask(Task task) {
         String update = "UPDATE catering.Tasks SET overflow = ? WHERE name = ? AND position = ?;";
         int[] result = PersistenceManager.executeBatchUpdate(update, 1, new BatchUpdateHandler() {
@@ -141,7 +219,7 @@ public class Task {
             public void handleBatchItem(PreparedStatement ps, int batchCount) throws SQLException {
                 ps.setBoolean(1, true);
                 ps.setString(2, task.name);
-                ps.setInt(1, task.position);
+                ps.setInt(3, task.position);
             }
 
             @Override
@@ -151,5 +229,6 @@ public class Task {
         });
 
     }
+
 
 }

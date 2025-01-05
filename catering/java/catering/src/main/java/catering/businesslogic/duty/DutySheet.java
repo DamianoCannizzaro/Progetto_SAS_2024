@@ -12,12 +12,14 @@ import javafx.collections.ObservableList;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 public class DutySheet {
     protected int id;
     protected EventInfo event;
     protected User owner;
     protected boolean active;
+    protected static Map<Integer, DutySheet> loadedDS = FXCollections.observableHashMap();
     protected ObservableList<Task> tasks = FXCollections.observableArrayList();
     protected ObservableList<Task> overflowTasks = FXCollections.observableArrayList();
 
@@ -31,6 +33,8 @@ public class DutySheet {
     }
 
 
+
+
     public int getEventId(){
         return this.event.getId();
     }
@@ -41,16 +45,41 @@ public class DutySheet {
 
     public Task addTask(String name, String description, int qty) {
         Task task = new Task(name, description, qty);
-        tasks.add(task);
+        tasks.add(task.getPosition(),task);
         return task;
     }
-    public void moveTask(Task task, int position) {
-        tasks.remove(task);
-        tasks.add(position, task);
+    public void moveTask(Task taskToMove, Task task2) {
+        if (tasks == null || tasks.isEmpty()) {
+            throw new IllegalStateException("La lista delle task è vuota.");
+        }
+
+        int pos1 = tasks.indexOf(taskToMove);
+        int pos2 = tasks.indexOf(task2);
+
+
+        if (pos1 == -1 || pos2 == -1) {
+            throw new IllegalArgumentException("Uno o entrambi i task non esistono nella lista.");
+        }
+
+        tasks.remove(taskToMove);
+        tasks.remove(task2);
+
+        if (pos1 < pos2) {
+            tasks.add(pos1, task2);
+            tasks.add(pos2, taskToMove);
+        } else {
+            tasks.add(pos2, taskToMove);
+            tasks.add(pos1, task2);
+        }
     }
 
-    public void assignTask(Task task, Shift[] shifts, User[] staff) throws UseCaseLogicException {
+
+    public void assignTask(Task task, Shift[] shifts, User[] staff){
         task.assignTask(shifts,staff);
+    }
+
+    public void removeAssignment(Task task, User[] staff) {
+        task.removeAssignment(staff);
     }
 
 
@@ -71,12 +100,31 @@ public class DutySheet {
                 }
             }
         });
+        if (result[0]>0) loadedDS.put(ds.id, ds);
+    }
+
+    public static void deleteDutySheetFromDB(DutySheet ds) {
+        String strDelDS = "DELETE FROM catering.DutySheets WHERE event_id = ? AND owner_id = ? AND active = ?;";
+        int[] result = PersistenceManager.executeBatchUpdate(strDelDS, 1, new BatchUpdateHandler() {
+            @Override
+            public void handleBatchItem(PreparedStatement ps, int batchCount) throws SQLException {
+                ps.setInt(1,ds.getEventId());
+                ps.setInt(2,ds.getOwnerId());
+                ps.setBoolean(3,ds.active);
+            }
+
+            @Override
+            public void handleGeneratedIds(ResultSet rs, int count) throws SQLException {
+                // Non è necessario gestire gli ID generati in un'operazione di DELETE
+            }
+        });
+        if (result[0]>0) loadedDS.remove(ds.id,ds);
     }
 
 
-    public Task setOverflow(ObservableList<Task> ol, Task task, boolean overflow, int qty, int guests) {
-        Task ofTask = task.setOverflow(overflow,qty,guests);
-        ol.add(ofTask);
+    public Task setOverflow( Task task, int qty, int guests) {
+        Task ofTask = task.setOverflow(qty,guests);
+        overflowTasks.add(ofTask);
         return ofTask;
     }
 
@@ -107,6 +155,23 @@ public class DutySheet {
             }
         });
         return ds;
+    }
+
+    public String toString(){
+        return event.getName() + " | " + owner.getUserName() + " | " + active;
+    }
+
+    public void testString(){
+        System.out.printf("%-10s | %-25s | %-10s | %s\n","id","Evento","Proprietario","attivo");
+        for(Map.Entry<Integer,DutySheet> entry : loadedDS.entrySet()){
+            int chiave = entry.getKey();
+            DutySheet val = entry.getValue();
+            System.out.printf("\n%-10s | %s",chiave,val);
+        }
+        if (tasks.isEmpty()) System.out.println("\nTasks array is empty, create new task and assign to a Duty Sheet. \n");
+        for (Task task : tasks){
+            System.out.println(task);
+        }
     }
 
 }

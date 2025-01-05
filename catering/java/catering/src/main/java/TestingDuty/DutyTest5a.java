@@ -1,6 +1,8 @@
-package TestingShifts;
+package TestingDuty;
 import catering.businesslogic.CatERing;
 import catering.businesslogic.UseCaseLogicException;
+import catering.businesslogic.duty.DutySheet;
+import catering.businesslogic.duty.Task;
 import catering.businesslogic.event.EventInfo;
 import catering.businesslogic.menu.Menu;
 import catering.businesslogic.menu.Section;
@@ -13,18 +15,22 @@ import javafx.collections.ObservableList;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.util.Scanner;
 
-public class TestCatERing3a {
+public class DutyTest5a {
     public static void main(String[] args) {
         try {
+            Scanner in = new Scanner(System.in);
             System.out.println("TEST CLEANUP TABLES");
             PersistenceManager.resetTables();
-             System.out.println("TEST DATABASE CONNECTION");
+            System.out.println("TEST DATABASE CONNECTION");
             PersistenceManager.testSQLConnection();
-            CatERing.getInstance().getUserManager().login("Lidia");
-            User organizer = CatERing.getInstance().getUserManager().getCurrentUser();
+            System.out.print("SCEGLI ACCOUNT CON CUI FARE LOGIN: ");
+            CatERing.getInstance().getUserManager().login(in.nextLine());
+            User currUser = CatERing.getInstance().getUserManager().getCurrentUser();
+            System.out.println(currUser);
 
-            Menu m = CatERing.getInstance().getMenuManager().createMenu("Menu di Lidia");
+            Menu m = CatERing.getInstance().getMenuManager().createMenu("Menu di " + currUser.getUserName());
 
             Section antipasti = CatERing.getInstance().getMenuManager().defineSection("Antipasti");
             Section primi = CatERing.getInstance().getMenuManager().defineSection("Primi");
@@ -40,11 +46,10 @@ public class TestCatERing3a {
             CatERing.getInstance().getMenuManager().insertItem(recipes.get(4));
 
             CatERing.getInstance().getMenuManager().publish();
-            System.out.println("\nMENU CREATO");
-            System.out.println(m.testString());
-
+            System.out.println("\nMENU IS PUBLIC");
             EventInfo e = CatERing.getInstance().getEventManager().getEventInfoFromName("Convegno Agile Community");
-            e.AssignUser(organizer);
+            e.AssignUser(currUser);
+
             ShiftTable cst = CatERing.getInstance().getShiftManager().createCookShiftTable("c", e);
             ShiftTable sst = CatERing.getInstance().getShiftManager().createServiceShiftTable("s", e);
             System.out.println("\nSHIFTTABLE CREATE");
@@ -64,18 +69,47 @@ public class TestCatERing3a {
             CatERing.getInstance().getShiftManager().addShiftToTable(cst,st2,et2,jd,dl2,g2, gn);
             System.out.println("\nSHIFT CREATI");
 
-            System.out.println("\nTEST UPDATE SHIFT");
-            System.out.println("\nTURNO DI PARTENZA");
-            System.out.println(cookShift.toString());
-            CatERing.getInstance().getShiftManager().updateShift(cookShift,cst,sT1,eT1,jd,dl1,g2, gn);
-            System.out.println("\nTURNO MODIFICATO");
-            System.out.println(cookShift);
+
+            System.out.println("--------------------------------------------------------------");
+
+            System.out.println("\nTEST CREATE DUTY SHEET");
+            DutySheet ds = CatERing.getInstance().getDutyManager().createDutySheet(e,false);
+            ds.testString();
+
+            System.out.println("--------------------------------------------------------------");
+            System.out.println("\nTEST CREATE TASK");
+            String tName = "Lasagna alla zucca";
+            String tDesc = "Cuocere zucca al forno, preparare besciamella,\ntagliare pancetta,\nassemblare,\nin forno per 30'";
+            int qty = 50;
+            Task newTask = CatERing.getInstance().getDutyManager().addTask(tName,tDesc,qty);
 
 
 
+            String tName1 = "Vitello tonnato";
+            String tDesc1= "Rosolare il filetto,\npreparare salsa tonnata,\nfiletto a cottura lenta,\naffettare filetto,\nimpiattare";
+            int qty1= 150;
+            Task newTask1= CatERing.getInstance().getDutyManager().addTask(tName1,tDesc1,qty1);
+            System.out.println("\nTASK CREATED");
+            System.out.println(newTask.toString());
+            System.out.println(newTask1.toString());
+            System.out.println("--------------------------------------------------------------");
+
+            User cook1= CatERing.getInstance().getUserManager().getUser("Antonietta");
+            User cook2 = CatERing.getInstance().getUserManager().getUser("Guido");
+
+            User[] staff = {cook1,cook2};
+            Shift[] shifts = {cookShift};
+
+            CatERing.getInstance().getDutyManager().assignTask(ds,newTask,shifts,staff);
+            System.out.println("\nTASK ASSIGNED");
+            System.out.println("--------------------------------------------------------------");
+            System.out.println("\nTEST REMOVE TASK");
+            User[] staff2 = {cook2};
+            CatERing.getInstance().getDutyManager().removeAssignedTask(ds,newTask,staff2,shifts);
+            System.out.println("\nTASK REMOVED");
 
         } catch (UseCaseLogicException e) {
-            System.out.println("Errore di logica nello use case");
+            System.out.println(e.getErrorDetails());
         }
     }
 }

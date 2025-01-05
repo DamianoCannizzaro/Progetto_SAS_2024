@@ -20,7 +20,7 @@ public class TestCatERing1b {
         try {
             Scanner in = new Scanner(System.in);
             System.out.println("TEST CLEANUP TABLES");
-            PersistenceManager.clearAllTables();
+            PersistenceManager.resetTables();
             System.out.println("TEST DATABASE CONNECTION");
             PersistenceManager.testSQLConnection();
             System.out.print("SCEGLI ACCOUNT CON CUI FARE LOGIN: ");
@@ -48,6 +48,7 @@ public class TestCatERing1b {
             System.out.println(m.testString());
 
             EventInfo e = CatERing.getInstance().getEventManager().getEventInfoFromName("Convegno Agile Community");
+            e.AssignUser(currUser);
             ShiftTable cst = CatERing.getInstance().getShiftManager().createCookShiftTable("c", e);
             ShiftTable sst = CatERing.getInstance().getShiftManager().createServiceShiftTable("s", e);
             System.out.println("\nSHIFTTABLE CREATE");
@@ -67,6 +68,7 @@ public class TestCatERing1b {
             CatERing.getInstance().getShiftManager().addShiftToTable(cst,st2,et2,jd,dl2,g2, gn);
             System.out.println("\nSHIFT CREATI");
 
+            System.out.println("-------------------------------------------------------------");
 
             System.out.println("\nTEST ADD RECURRING TABLE");
             //creo nuove date per la ricorrenza
@@ -77,8 +79,8 @@ public class TestCatERing1b {
 
             Date[] Dates = {d1,d2};
             CatERing.getInstance().getShiftManager().addRecurringTable(cst,Dates);
-            System.out.println("\nRECURRING TABLE CREATE");
-            System.out.println("\nTEST RICORRENZA DA DATA");
+            System.out.println("-------------------------------------------------------------");
+            System.out.println("\nRECURRING TABLE CREATED");
             CatERing.getInstance().getShiftManager().printRecurringTable(cst);
             System.out.println("\nTEST UPDATE INSTANCE");
             Date[] dateToUpdate = {d2};

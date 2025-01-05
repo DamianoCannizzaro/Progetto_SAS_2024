@@ -1,6 +1,7 @@
 package catering.businesslogic;
 
 import catering.businesslogic.duty.DutyManager;
+import catering.businesslogic.duty.DutySheet;
 import catering.businesslogic.event.EventManager;
 import catering.businesslogic.menu.MenuManager;
 import catering.businesslogic.recipe.RecipeManager;
@@ -66,4 +67,5 @@ public class CatERing {
 
     public ShiftManager getShiftManager() { return shiftMgr; }
 
+    public DutyManager getDutyManager() { return dutyMgr;}
 }

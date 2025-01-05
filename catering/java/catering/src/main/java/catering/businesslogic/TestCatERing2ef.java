@@ -3,12 +3,13 @@ import catering.businesslogic.menu.Menu;
 import catering.businesslogic.menu.MenuItem;
 import catering.businesslogic.menu.Section;
 import catering.businesslogic.recipe.Recipe;
+import catering.persistence.PersistenceManager;
 import javafx.collections.ObservableList;
 
 public class TestCatERing2ef {
     public static void main(String[] args) {
         try {
-            /* System.out.println("TEST DATABASE CONNECTION");
+            /*System.out.println("TEST DATABASE CONNECTION");
             PersistenceManager.testSQLConnection();*/
             CatERing.getInstance().getUserManager().login("Lidia");
             System.out.println(CatERing.getInstance().getUserManager().getCurrentUser());
@@ -33,7 +34,7 @@ public class TestCatERing2ef {
             System.out.println(m.testString());
 
         } catch (UseCaseLogicException ex) {
-            System.out.println("Errore di logica nello use case");
+            System.out.println("Errore di logica nello use case: " +ex.getErrorDetails());
         }
     }
 }

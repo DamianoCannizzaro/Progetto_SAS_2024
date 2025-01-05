@@ -11,6 +11,10 @@ public class PersistenceManager {
 
     private static int lastId;
 
+    public static String getUrl(){return url;}
+    public static String getUsername(){return username;}
+    public static String getPassword(){return password;}
+
     public static String escapeString(String input) {
         input = input.replace("\\", "\\\\");
         input = input.replace("\'", "\\\'");
@@ -21,7 +25,7 @@ public class PersistenceManager {
     }
     public static void testSQLConnection() {
         try (Connection conn = DriverManager.getConnection(url, username, password);
-             PreparedStatement ps = conn.prepareStatement("SELECT * FROM Users where true");
+             PreparedStatement ps = conn.prepareStatement("SELECT * FROM catering.Users where true");
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("id");
@@ -33,25 +37,45 @@ public class PersistenceManager {
         }
     }
 
-    public static void clearAllTables() {
-        // Lista delle tabelle da svuotare
-        String[] tables = { "catering.Shifts", "catering.shifttables", "catering.menus", "catering.menufeatures", "catering.menuitems" };
-        for (String table : tables) {
-            String deleteQuery = "DELETE FROM " + table + ";";
-            int[] result = PersistenceManager.executeBatchUpdate(deleteQuery, 1, new BatchUpdateHandler() {
-                @Override
-                public void handleBatchItem(PreparedStatement ps, int batchCount) throws SQLException {
-                }
+    public static void resetTables() {
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             Statement s = conn.createStatement()) {
 
-                @Override
-                public void handleGeneratedIds(ResultSet rs, int count) throws SQLException {
-                }
-            });
+            // Disabilita i vincoli di foreign key
+            s.execute("SET FOREIGN_KEY_CHECKS = 0");
 
-            // Opzionale: gestione del risultato dell'operazione
-            System.out.println("Tabella " + table + ": " + result[0] + " record eliminati.");
+            // Svuota tutte le tabelle
+            clearAllTables(s);
+
+            // Riabilita i vincoli di foreign key
+            s.execute("SET FOREIGN_KEY_CHECKS = 1");
+
+            System.out.println("Tutte le tabelle sono state resettate con successo.");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
+
+    public static void clearAllTables(Statement statement) {
+        // Lista delle tabelle da svuotare
+        String[] tables = {
+                "catering.Shifts", "catering.shifttables", "catering.menus",
+                "catering.menufeatures", "catering.menuitems", "catering.menusections",
+                "catering.recurringtable", "catering.dutysheets", "catering.tasks",
+                "catering.taskassignment"
+        };
+
+        for (String table : tables) {
+            try {
+                // Esegui il comando TRUNCATE per ogni tabella
+                statement.execute("TRUNCATE TABLE " + table);
+                System.out.println("Tabella " + table + " svuotata con successo.");
+            } catch (SQLException e) {
+                System.err.println("Errore durante il truncate della tabella " + table + ": " + e.getMessage());
+            }
+        }
+    }
+
 
     /**
      *  metodo che permette di eseguire una query mandata in input

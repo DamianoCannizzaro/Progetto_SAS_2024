@@ -1,4 +1,4 @@
-package TestingShifts;
+package TestingDuty;
 import catering.businesslogic.CatERing;
 import catering.businesslogic.UseCaseLogicException;
 import catering.businesslogic.event.EventInfo;
@@ -13,18 +13,22 @@ import javafx.collections.ObservableList;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.util.Scanner;
 
-public class TestCatERing3c {
+public class DutyTest4 {
     public static void main(String[] args) {
         try {
-            System.out.println("CLEANUP TABLES");
+            Scanner in = new Scanner(System.in);
+            System.out.println("TEST CLEANUP TABLES");
             PersistenceManager.resetTables();
             System.out.println("TEST DATABASE CONNECTION");
             PersistenceManager.testSQLConnection();
-            CatERing.getInstance().getUserManager().login("Lidia");
-            User organizer = CatERing.getInstance().getUserManager().getCurrentUser();
+            System.out.print("SCEGLI ACCOUNT CON CUI FARE LOGIN: ");
+            CatERing.getInstance().getUserManager().login(in.nextLine());
+            User currUser = CatERing.getInstance().getUserManager().getCurrentUser();
+            System.out.println(currUser);
 
-            Menu m = CatERing.getInstance().getMenuManager().createMenu("Menu di Lidia");
+            Menu m = CatERing.getInstance().getMenuManager().createMenu("Menu di " + currUser.getUserName());
 
             Section antipasti = CatERing.getInstance().getMenuManager().defineSection("Antipasti");
             Section primi = CatERing.getInstance().getMenuManager().defineSection("Primi");
@@ -44,7 +48,7 @@ public class TestCatERing3c {
             System.out.println(m.testString());
 
             EventInfo e = CatERing.getInstance().getEventManager().getEventInfoFromName("Convegno Agile Community");
-            e.AssignUser(organizer);
+            e.AssignUser(currUser);
             ShiftTable cst = CatERing.getInstance().getShiftManager().createCookShiftTable("c", e);
             ShiftTable sst = CatERing.getInstance().getShiftManager().createServiceShiftTable("s", e);
             System.out.println("\nSHIFTTABLE CREATE");
@@ -59,20 +63,18 @@ public class TestCatERing3c {
             boolean g1 = true;
             boolean g2 = false;
             String gn = "Brigata blu";
-            Shift newCS = CatERing.getInstance().getShiftManager().addShiftToTable(cst,sT1,eT1,jd,dl1,g1, gn);
-            Shift newSS = CatERing.getInstance().getShiftManager().addShiftToTable(sst,st2,et2,jd,dl2,g2, gn);
+            Shift cookShift = CatERing.getInstance().getShiftManager().addShiftToTable(cst,sT1,eT1,jd,dl1,g1, gn);
+            Shift serviceShift = CatERing.getInstance().getShiftManager().addShiftToTable(sst,st2,et2,jd,dl2,g2, gn);
             CatERing.getInstance().getShiftManager().addShiftToTable(cst,st2,et2,jd,dl2,g2, gn);
             System.out.println("\nSHIFT CREATI");
 
-            System.out.println("----------------------------------------------------------------------------");
-            System.out.println("\nTEST DELETE SHIFT");
-            System.out.println("\nSHIFT TABLE INIZIALE");
-            cst.testString();
-            System.out.println("\nSHIFT TABLE FINALE");
-            CatERing.getInstance().getShiftManager().deleteShift(newCS,cst);
-            cst.testString();
+            System.out.println("-------------------------------------------------------------");
+            System.out.println("\nTEST CHECK TABLE");
+            ShiftTable openedShiftTable = CatERing.getInstance().getShiftManager().checkTable(cst);
+            openedShiftTable.testString();
+
         } catch (UseCaseLogicException e) {
-            System.out.println("Errore di logica nello use case");
+            System.out.println("Errore di logica nello use case: " + e.getErrorDetails());
         }
     }
 }

@@ -20,7 +20,7 @@ public class TestCatERing {
     public static void main(String[] args) {
         try {
             System.out.println("TEST CLEANUP TABLES");
-            PersistenceManager.clearAllTables();
+            PersistenceManager.resetTables();
              System.out.println("TEST DATABASE CONNECTION");
             PersistenceManager.testSQLConnection();
             System.out.println("LOGIN");
