@@ -2,8 +2,8 @@ package catering.businesslogic.event;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import catering.persistence.PersistenceManager;
-import catering.persistence.ResultHandler;
+import catering.businesslogic.persistence.PersistenceManager;
+import catering.businesslogic.persistence.ResultHandler;
 
 import java.sql.Date;
 import java.sql.ResultSet;

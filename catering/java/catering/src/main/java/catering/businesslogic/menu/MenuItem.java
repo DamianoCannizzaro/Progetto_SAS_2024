@@ -3,9 +3,9 @@ package catering.businesslogic.menu;
 import catering.businesslogic.recipe.Recipe;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import catering.persistence.BatchUpdateHandler;
-import catering.persistence.PersistenceManager;
-import catering.persistence.ResultHandler;
+import catering.businesslogic.persistence.BatchUpdateHandler;
+import catering.businesslogic.persistence.PersistenceManager;
+import catering.businesslogic.persistence.ResultHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

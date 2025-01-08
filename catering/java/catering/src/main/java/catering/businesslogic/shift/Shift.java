@@ -1,24 +1,13 @@
 package catering.businesslogic.shift;
 
-import catering.businesslogic.CatERing;
-import catering.businesslogic.recipe.Recipe;
-import catering.businesslogic.user.User;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
-import catering.persistence.BatchUpdateHandler;
-import catering.persistence.PersistenceManager;
-import catering.persistence.ResultHandler;
+import catering.businesslogic.persistence.BatchUpdateHandler;
+import catering.businesslogic.persistence.PersistenceManager;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Map;
-import java.util.Objects;
 
 public class Shift {
     private final String type;

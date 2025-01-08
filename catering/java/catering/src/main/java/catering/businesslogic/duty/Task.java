@@ -1,16 +1,13 @@
 package catering.businesslogic.duty;
 
-import catering.businesslogic.CatERing;
-import catering.businesslogic.UseCaseLogicException;
 import catering.businesslogic.shift.Shift;
 import catering.businesslogic.user.User;
-import catering.persistence.BatchUpdateHandler;
-import catering.persistence.PersistenceManager;
+import catering.businesslogic.persistence.BatchUpdateHandler;
+import catering.businesslogic.persistence.PersistenceManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.Arrays;
 
 

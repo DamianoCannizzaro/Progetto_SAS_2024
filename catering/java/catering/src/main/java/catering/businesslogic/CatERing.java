@@ -1,17 +1,14 @@
 package catering.businesslogic;
 
 import catering.businesslogic.duty.DutyManager;
-import catering.businesslogic.duty.DutySheet;
 import catering.businesslogic.event.EventManager;
 import catering.businesslogic.menu.MenuManager;
 import catering.businesslogic.recipe.RecipeManager;
-import catering.businesslogic.shift.Shift;
 import catering.businesslogic.shift.ShiftManager;
 import catering.businesslogic.user.UserManager;
-import catering.businesslogic.duty.DutyManager;
-import catering.persistence.DutyPersistence;
-import catering.persistence.MenuPersistence;
-import catering.persistence.ShiftPersistence;
+import catering.businesslogic.persistence.DutyPersistence;
+import catering.businesslogic.persistence.MenuPersistence;
+import catering.businesslogic.persistence.ShiftPersistence;
 
 public class CatERing {
     private static CatERing singleInstance;

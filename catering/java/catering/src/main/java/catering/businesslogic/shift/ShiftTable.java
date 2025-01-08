@@ -2,8 +2,8 @@ package catering.businesslogic.shift;
 
 import catering.businesslogic.event.EventInfo;
 import catering.businesslogic.user.User;
-import catering.persistence.BatchUpdateHandler;
-import catering.persistence.PersistenceManager;
+import catering.businesslogic.persistence.BatchUpdateHandler;
+import catering.businesslogic.persistence.PersistenceManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
@@ -75,7 +75,7 @@ public abstract class ShiftTable {
 
     //PERSISTENCE AND FORMAT METHODS
     public static void saveNewShiftTable(ShiftTable st) {
-        String stInsert = "INSERT INTO catering.ShiftTables (event, ev_type, owner_id, `order`) VALUES (?, ?, ?, ?);";
+        String stInsert = "INSERT INTO catering.ShiftTables (event, ev_type, owner_id, `order`) VALUES (?, ?, ?);, ?";
         int[] result = PersistenceManager.executeBatchUpdate(stInsert, 1, new BatchUpdateHandler() {
             @Override
             public void handleBatchItem(PreparedStatement ps, int batchCount) throws SQLException {

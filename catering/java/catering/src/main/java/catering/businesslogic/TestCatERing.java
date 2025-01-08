@@ -8,7 +8,7 @@ import catering.businesslogic.recipe.Recipe;
 import catering.businesslogic.shift.Shift;
 import catering.businesslogic.shift.ShiftTable;
 import catering.businesslogic.user.User;
-import catering.persistence.PersistenceManager;
+import catering.businesslogic.persistence.PersistenceManager;
 import javafx.collections.ObservableList;
 
 import java.sql.Time;
